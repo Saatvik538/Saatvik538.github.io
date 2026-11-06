@@ -2,19 +2,18 @@
 
 Personal site of **Saatvik Kesarwani**, ECE @ UT Austin, Robotics Honors.
 
-The whole site is one circuit board: scrolling follows a copper signal bus from the main processor,
-through six project modules and five experience chips, to the UT Austin core.
+The site is the teach pendant of a robot arm, **SK-01**: projects are programs you select and run,
+experience is the event log, and the e-stop really stops things. Plain HTML/CSS/JS, no build step,
+fonts self-hosted.
 
-Plain HTML/CSS/JS with [three.js](https://threejs.org) (vendored in `assets/vendor`), no build step.
+**Keys:** `1–5` / `F1–F5` switch screens · `↑ ↓` select · `Enter` / `R` run · `S` step · `H` hold · `Esc` e-stop
 
 ## Adding photos
 
-Drop JPGs into `assets/photos/` with these names and they appear on the experience timeline automatically
-(16:10 crop, ~1200px wide is plenty). Missing photos are simply hidden.
+Drop JPGs into `assets/photos/` with these names and they appear in the event log automatically
+(16:9 crop). Missing photos are simply hidden.
 
-`orangewood.jpg` · `dartmouth.jpg` · `obscurity-labs.jpg` · `texas-aerial-robotics.jpg` · `nesteye.jpg`
-
-The About portrait is `headshot.jpg`.
+`nesteye.jpg` · `texas-aerial-robotics.jpg` · `dartmouth.jpg` · `obscurity-labs.jpg` · `orangewood.jpg`
 
 ## Run locally
 
