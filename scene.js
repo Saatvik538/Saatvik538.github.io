@@ -342,7 +342,7 @@ function platform(text) {
 }
 
 // ---------- hero processor ----------
-const cpu = chip(5, 5, 0.42, 12, 'SK', 'KESARWANI · 2029');
+const cpu = chip(5, 5, 0.42, 12, 'SK', 'KESARWANI');
 scene.add(cpu);
 {
   const l = label('U0  MAIN PROCESSOR', { size: 0.36 }); l.position.set(-2.6, 0.02, 3.4); scene.add(l);
@@ -515,7 +515,7 @@ const expChips = EXP_X.map((x, i) => {
 });
 
 // ---------- UT core ----------
-const core = chip(7, 7, 0.5, 16, 'UT AUSTIN', "ECE · ROBOTICS · '29");
+const core = chip(7, 7, 0.5, 16, 'UT AUSTIN', 'ECE · ROBOTICS');
 core.position.copy(CORE);
 scene.add(core);
 const coreHalo = new THREE.Mesh(new THREE.RingGeometry(5.2, 5.35, 64), new THREE.MeshBasicMaterial({ color: glow(0xbf5700, 2.2), transparent: true, opacity: 0.9 }));
