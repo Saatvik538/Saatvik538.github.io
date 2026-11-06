@@ -381,27 +381,39 @@
      ==================================================================== */
   const stops = $$('.stop');
   const boardRows = $('#boardRows');
-  const flap = (txt) => `<span class="flap">${[...txt.toUpperCase()].map((c) => `<i data-c="${c === ' ' ? '&nbsp;' : c}">${c === ' ' ? '&nbsp;' : c}</i>`).join('')}</span>`;
-  stops.forEach((s) => {
-    const live = /flight/i.test(s.dataset.status);
+  // Chronological (oldest first). `sort` is a decimal year used only for ordering.
+  const BOARD = [
+    { id: 's-ftc', sort: 2022.0, date: '2022', code: 'FTC', name: 'FTC Robo Troopers', what: 'Robot CAD, build & autonomous → Worlds', type: 'Build', status: 'Landed' },
+    { id: 's-owl', sort: 2024.45, date: 'Jun 2024', code: 'OWL', name: 'Orangewood Labs', what: 'Forward-deployed engineering intern', type: 'Work', status: 'Landed' },
+    { id: 's-atb', sort: 2024.5, date: '2024', code: 'ATB', name: 'AcousticTB', what: 'TB screening from a cough · published', type: 'Build', status: 'Landed' },
+    { id: 's-arm', sort: 2025.0, date: '2025', code: 'ARM', name: 'Language-Controlled Robot Arm', what: 'Plain-English commands → safe arm motion', type: 'Build', status: 'Landed' },
+    { id: 's-dhm', sort: 2025.37, date: 'May 2025', code: 'DHM', name: 'Dartmouth Hitchcock', what: 'AI/ML research intern → mentor', type: 'Work', status: 'Landed' },
+    { id: 's-obs', sort: 2025.5, date: 'Jul 2025', code: 'OBS', name: 'Obscurity Labs', what: 'Software engineering intern', type: 'Work', status: 'Landed' },
+    { id: 's-gwy', sort: 2026.1, date: '2026', code: 'GWY', name: 'GaitWay', what: 'iPhone LiDAR gait lab · 1st place', type: 'Build', status: 'Landed' },
+    { id: 's-omn', sort: 2026.2, date: '2026', code: 'OMN', name: 'OmniGlasses', what: 'Smart glasses that see behind you', type: 'Build', status: 'Landed' },
+    { id: 's-ska', sort: 2026.3, date: '2026', code: 'SKA', name: 'skadvising.org', what: 'Tutoring business website', type: 'Build', status: 'Landed' },
+    { id: 's-nst', sort: 2026.67, date: 'Sep 2026', code: 'NST', name: 'Nesteye', what: 'Embedded software engineering intern', type: 'Work', status: 'In flight' },
+    { id: 's-tar', sort: 2026.75, date: 'Oct 2026', code: 'TAR', name: 'Texas Aerial Robotics', what: 'Drone swarm hardware & software', type: 'Work', status: 'In flight' },
+  ].sort((a, b) => a.sort - b.sort);
+  let lastYear = null;
+  BOARD.forEach((r, i) => {
+    const yr = r.date.slice(-4);
+    if (yr !== lastYear) {
+      const y = document.createElement('div'); y.className = 'board-year'; y.textContent = yr; boardRows.appendChild(y); lastYear = yr;
+    }
+    const live = r.status === 'In flight';
     const b = document.createElement('button'); b.className = 'board-row'; b.type = 'button'; b.setAttribute('role', 'row');
-    b.innerHTML = `<span class="yr" role="cell">${flap(s.dataset.year.slice(0, 7))}</span><span role="cell">${flap(s.dataset.name.slice(0, innerWidth <= 760 ? 13 : 22))}</span><span class="gate" role="cell">${flap(s.dataset.code)}</span><span class="st${live ? ' live' : ''}" role="cell">${flap(s.dataset.status)}</span>`;
-    b.addEventListener('click', () => { const r = s.getBoundingClientRect(); scrollTo({ top: r.top + scrollY - innerHeight / 2 + r.height / 2, behavior: reduce ? 'auto' : 'smooth' }); });
+    b.style.setProperty('--i', i);
+    b.innerHTML = `<span class="b-date" role="cell">${r.date}</span>`
+      + `<span class="b-code" role="cell">${r.code}</span>`
+      + `<span class="b-dest" role="cell"><b>${r.name}</b><small>${r.what}</small></span>`
+      + `<span class="b-type ${r.type.toLowerCase()}" role="cell">${r.type}</span>`
+      + `<span class="b-st${live ? ' live' : ''}" role="cell"><i></i>${r.status}</span>`;
+    b.addEventListener('click', () => { const s = document.getElementById(r.id); const rc = s.getBoundingClientRect(); scrollTo({ top: rc.top + scrollY - innerHeight / 2 + Math.min(rc.height, innerHeight * 0.8) / 2, behavior: reduce ? 'auto' : 'smooth' }); });
     boardRows.appendChild(b);
   });
-  if (!reduce) {
-    const CH = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    const bo = new IntersectionObserver(([e]) => {
-      if (!e.isIntersecting) return; bo.disconnect();
-      $$('.flap i', boardRows).forEach((el, i) => {
-        const fin = el.dataset.c; if (fin === '&nbsp;') return;
-        let n = 6 + (i % 9);
-        const tick = () => { if (n-- <= 0) { el.innerHTML = fin; return; } el.textContent = CH[(Math.random() * CH.length) | 0]; setTimeout(tick, 45); };
-        setTimeout(tick, (i % 30) * 12);
-      });
-    }, { threshold: 0.3 });
-    bo.observe($('.board'));
-  }
+  const bo = new IntersectionObserver(([e]) => { if (e.isIntersecting) { $('.board').classList.add('in'); bo.disconnect(); } }, { threshold: 0.2 });
+  bo.observe($('.board'));
 
   /* ====================================================================
      FLIGHT ROUTE (plane follows the path while scrolling)

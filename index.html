@@ -76,7 +76,7 @@
   <div class="hud" aria-hidden="true">
     <div><span>ALT</span><b id="hudAlt">35,000 ft</b></div>
     <div><span>GS</span><b id="hudGs">512 kt</b></div>
-    <div><span>NEXT</span><b>ATB · AcousticTB</b></div>
+    <div><span>NEXT</span><b>FTC · Robo Troopers</b></div>
   </div>
 
   <button class="earth-hit" id="earthHit" type="button" aria-label="Open the travel globe"><span>Tap the Earth to see where I've traveled</span></button>
@@ -88,11 +88,11 @@
   <div class="wrap">
     <p class="kicker">Itinerary</p>
     <h2 class="h2">Every stop is something I built.</h2>
-    <p class="lede">The plane flies the route as you scroll: six builds, then five places I've worked. Click a row on the board to jump straight there.</p>
+    <p class="lede">Everything in order, oldest first. Click any row to jump to it, or just scroll and the plane flies the route: six builds, then five places I've worked.</p>
 
     <div class="board" role="table" aria-label="Departures board">
       <div class="board-head" role="row">
-        <span role="columnheader">Year</span><span role="columnheader">Destination</span><span role="columnheader">Gate</span><span role="columnheader">Status</span>
+        <span role="columnheader">Departed</span><span role="columnheader">Flight</span><span role="columnheader">Destination</span><span role="columnheader">Type</span><span role="columnheader">Status</span>
       </div>
       <div id="boardRows"></div>
     </div>
@@ -112,8 +112,27 @@
 
     <div class="leg"><span>Leg 01</span><b>Builds</b></div>
 
+    <article class="stop" id="s-ftc" data-code="FTC" data-year="2022–25" data-name="FTC Robo Troopers" data-status="Landed">
+      <div class="pass">
+        <div class="viz"><canvas data-viz="ftc" aria-hidden="true"></canvas></div>
+        <div class="pass-main">
+          <div class="pass-top"><span class="code">FTC</span><span class="meta">Team 15167 · Robo Troopers</span></div>
+          <h3>FIRST Tech Challenge</h3>
+          <p>Led CAD, the build and the autonomous code. As alliance captain we won the 2025 Chesapeake State Championship and went to the FIRST World Championship.</p>
+          <ul class="chips"><li>Java</li><li>Onshape</li><li>Fusion 360</li><li>Autonomous</li></ul>
+        </div>
+        <div class="pass-stub">
+          <div><span>2025</span><b>Worlds</b></div>
+          <div><span>State</span><b>Champs</b></div>
+          <div><span>Awards</span><b>3</b></div>
+          <div class="barcode" aria-hidden="true"></div>
+        </div>
+      </div>
+    </article>
+
     <article class="stop" id="s-atb" data-code="ATB" data-year="2024–26" data-name="AcousticTB" data-status="Landed">
       <div class="pass">
+        <div class="viz"><canvas data-viz="atb" aria-hidden="true"></canvas></div>
         <div class="pass-main">
           <div class="pass-top"><span class="code">ATB</span><span class="meta">Published · sole author</span></div>
           <h3>AcousticTB</h3>
@@ -132,6 +151,7 @@
 
     <article class="stop" id="s-arm" data-code="ARM" data-year="2025–26" data-name="Robot Arm" data-status="Landed">
       <div class="pass">
+        <div class="viz"><canvas data-viz="arm" aria-hidden="true"></canvas></div>
         <div class="pass-main">
           <div class="pass-top"><span class="code">ARM</span><span class="meta">Robotics · LLMs</span></div>
           <h3>Language-Controlled Robot Arm</h3>
@@ -147,25 +167,9 @@
       </div>
     </article>
 
-    <article class="stop" id="s-omn" data-code="OMN" data-year="2026" data-name="OmniGlasses" data-status="Landed">
-      <div class="pass">
-        <div class="pass-main">
-          <div class="pass-top"><span class="code">OMN</span><span class="meta">Wearables · embedded</span></div>
-          <h3>OmniGlasses</h3>
-          <p>Glasses with eyes in the back of your head. Three ESP32 cameras stream to a phone over a custom UDP protocol, an FPGA turns collision events into spoken warnings, and a Flutter app tracks eye strain.</p>
-          <ul class="chips"><li>ESP32-CAM</li><li>FPGA</li><li>UDP</li><li>YOLO</li><li>Flutter</li></ul>
-        </div>
-        <div class="pass-stub">
-          <div><span>Rear objects</span><b>~95%</b></div>
-          <div><span>Blink/squint</span><b>98%</b></div>
-          <div><span>Live cams</span><b>3</b></div>
-          <div class="barcode" aria-hidden="true"></div>
-        </div>
-      </div>
-    </article>
-
     <article class="stop" id="s-gwy" data-code="GWY" data-year="2026" data-name="GaitWay" data-status="Landed">
       <div class="pass">
+        <div class="viz"><canvas data-viz="gwy" aria-hidden="true"></canvas></div>
         <div class="pass-main">
           <div class="pass-top"><span class="code">GWY</span><span class="meta">1st place · health</span></div>
           <h3>GaitWay</h3>
@@ -182,18 +186,19 @@
       </div>
     </article>
 
-    <article class="stop" id="s-ftc" data-code="FTC" data-year="2022–25" data-name="FTC Robo Troopers" data-status="Landed">
+    <article class="stop" id="s-omn" data-code="OMN" data-year="2026" data-name="OmniGlasses" data-status="Landed">
       <div class="pass">
+        <div class="viz"><canvas data-viz="omn" aria-hidden="true"></canvas></div>
         <div class="pass-main">
-          <div class="pass-top"><span class="code">FTC</span><span class="meta">Team 15167 · Robo Troopers</span></div>
-          <h3>FIRST Tech Challenge</h3>
-          <p>Led CAD, the build and the autonomous code. As alliance captain we won the 2025 Chesapeake State Championship and went to the FIRST World Championship.</p>
-          <ul class="chips"><li>Java</li><li>Onshape</li><li>Fusion 360</li><li>Autonomous</li></ul>
+          <div class="pass-top"><span class="code">OMN</span><span class="meta">Wearables · embedded</span></div>
+          <h3>OmniGlasses</h3>
+          <p>Glasses with eyes in the back of your head. Three ESP32 cameras stream to a phone over a custom UDP protocol, an FPGA turns collision events into spoken warnings, and a Flutter app tracks eye strain.</p>
+          <ul class="chips"><li>ESP32-CAM</li><li>FPGA</li><li>UDP</li><li>YOLO</li><li>Flutter</li></ul>
         </div>
         <div class="pass-stub">
-          <div><span>2025</span><b>Worlds</b></div>
-          <div><span>State</span><b>Champs</b></div>
-          <div><span>Awards</span><b>3</b></div>
+          <div><span>Rear objects caught</span><b>95%</b></div>
+          <div><span>Blink/squint</span><b>98%</b></div>
+          <div><span>Live cams</span><b>3</b></div>
           <div class="barcode" aria-hidden="true"></div>
         </div>
       </div>
@@ -201,6 +206,7 @@
 
     <article class="stop" id="s-ska" data-code="SKA" data-year="2026" data-name="skadvising.org" data-status="Landed">
       <div class="pass">
+        <div class="viz"><canvas data-viz="ska" aria-hidden="true"></canvas></div>
         <div class="pass-main">
           <div class="pass-top"><span class="code">SKA</span><span class="meta">Web · my tutoring business</span></div>
           <h3>skadvising.org</h3>
@@ -219,45 +225,21 @@
 
     <div class="leg"><span>Leg 02</span><b>Experience</b></div>
 
-    <article class="stop exp" id="s-nst" data-code="NST" data-year="2026" data-name="Nesteye" data-status="In flight">
+    <article class="stop exp" id="s-owl" data-code="OWL" data-year="2024" data-name="Orangewood Labs" data-status="Landed">
       <div class="pass">
         <div class="pass-main">
-          <div class="pass-top"><span class="code">NST</span><span class="meta">Sep 2026 – now · Austin, TX</span></div>
-          <h3><a href="https://nesteye.ai/" target="_blank" rel="noopener">Nesteye</a></h3>
-          <p class="role">Embedded Software Engineering Intern · $10M-valued AgTech startup</p>
-          <img class="shot" src="assets/photos/nesteye.jpg" alt="Nesteye" loading="lazy" onerror="this.remove()">
+          <div class="pass-top"><span class="code">OWL</span><span class="meta">Jun – Aug 2024 · Remote</span></div>
+          <h3>Orangewood Labs</h3>
+          <p class="role">Forward-Deployed Engineering Intern · YC-backed robot arms</p>
+          <img class="shot" src="assets/photos/orangewood.jpg" alt="Orangewood Labs" loading="lazy" onerror="this.remove()">
           <ul class="bul">
-            <li>Built an offline-first iOS LiDAR app that captured 500+ 3D poultry models at a &gt;90% autonomous success rate.</li>
-            <li>Kept scans of moving birds accurate with ARKit motion gating that rejects frames with &gt;100 mm motion residual.</li>
-            <li>Validated LiDAR captures against NVIDIA Omniverse simulations before deploying on farms.</li>
+            <li>Secured 10 product demos and pilot negotiations by mapping robot-arm use cases across 500+ factories and schools.</li>
           </ul>
         </div>
         <div class="pass-stub">
-          <div><span>3D scans</span><b>500+</b></div>
-          <div><span>Autonomous</span><b>&gt;90%</b></div>
-          <div><span>Status</span><b class="live">In flight</b></div>
-          <div class="barcode" aria-hidden="true"></div>
-        </div>
-      </div>
-    </article>
-
-    <article class="stop exp" id="s-tar" data-code="TAR" data-year="2026" data-name="Texas Aerial Robotics" data-status="In flight">
-      <div class="pass">
-        <div class="pass-main">
-          <div class="pass-top"><span class="code">TAR</span><span class="meta">Oct 2026 – now · Austin, TX</span></div>
-          <h3>Texas Aerial Robotics</h3>
-          <p class="role">Hardware &amp; Software Team Member · IARC drone swarm</p>
-          <img class="shot" src="assets/photos/texas-aerial-robotics.jpg" alt="Texas Aerial Robotics" loading="lazy" onerror="this.remove()">
-          <ul class="bul">
-            <li>Built a ROS-compatible Unity (C#) minefield simulator for zero-risk pre-flight testing of a 4-drone swarm.</li>
-            <li>Built a shared mine map for 4 drones by fusing AprilTag detections and pymavlink pose data in SQLite with 1 ft clearance.</li>
-            <li>Enabling hands-free control of each drone by relaying phone voice commands (start, pause, land) over TCP.</li>
-          </ul>
-        </div>
-        <div class="pass-stub">
-          <div><span>Drones</span><b>4</b></div>
-          <div><span>Clearance</span><b>1 ft</b></div>
-          <div><span>Status</span><b class="live">In flight</b></div>
+          <div><span>Demos</span><b>10</b></div>
+          <div><span>Sites mapped</span><b>500+</b></div>
+          <div><span>Year</span><b>2024</b></div>
           <div class="barcode" aria-hidden="true"></div>
         </div>
       </div>
@@ -307,21 +289,45 @@
       </div>
     </article>
 
-    <article class="stop exp" id="s-owl" data-code="OWL" data-year="2024" data-name="Orangewood Labs" data-status="Landed">
+    <article class="stop exp" id="s-nst" data-code="NST" data-year="2026" data-name="Nesteye" data-status="In flight">
       <div class="pass">
         <div class="pass-main">
-          <div class="pass-top"><span class="code">OWL</span><span class="meta">Jun – Aug 2024 · Remote</span></div>
-          <h3>Orangewood Labs</h3>
-          <p class="role">Forward-Deployed Engineering Intern · YC-backed robot arms</p>
-          <img class="shot" src="assets/photos/orangewood.jpg" alt="Orangewood Labs" loading="lazy" onerror="this.remove()">
+          <div class="pass-top"><span class="code">NST</span><span class="meta">Sep 2026 – now · Austin, TX</span></div>
+          <h3><a href="https://nesteye.ai/" target="_blank" rel="noopener">Nesteye</a></h3>
+          <p class="role">Embedded Software Engineering Intern · $10M-valued AgTech startup</p>
+          <img class="shot" src="assets/photos/nesteye.jpg" alt="Nesteye" loading="lazy" onerror="this.remove()">
           <ul class="bul">
-            <li>Secured 10 product demos and pilot negotiations by mapping robot-arm use cases across 500+ factories and schools.</li>
+            <li>Built an offline-first iOS LiDAR app that captured 500+ 3D poultry models at a &gt;90% autonomous success rate.</li>
+            <li>Kept scans of moving birds accurate with ARKit motion gating that rejects frames with &gt;100 mm motion residual.</li>
+            <li>Validated LiDAR captures against NVIDIA Omniverse simulations before deploying on farms.</li>
           </ul>
         </div>
         <div class="pass-stub">
-          <div><span>Demos</span><b>10</b></div>
-          <div><span>Sites mapped</span><b>500+</b></div>
-          <div><span>Year</span><b>2024</b></div>
+          <div><span>3D scans</span><b>500+</b></div>
+          <div><span>Autonomous</span><b>&gt;90%</b></div>
+          <div><span>Status</span><b class="live">In flight</b></div>
+          <div class="barcode" aria-hidden="true"></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="stop exp" id="s-tar" data-code="TAR" data-year="2026" data-name="Texas Aerial Robotics" data-status="In flight">
+      <div class="pass">
+        <div class="pass-main">
+          <div class="pass-top"><span class="code">TAR</span><span class="meta">Oct 2026 – now · Austin, TX</span></div>
+          <h3>Texas Aerial Robotics</h3>
+          <p class="role">Hardware &amp; Software Team Member · IARC drone swarm</p>
+          <img class="shot" src="assets/photos/texas-aerial-robotics.jpg" alt="Texas Aerial Robotics" loading="lazy" onerror="this.remove()">
+          <ul class="bul">
+            <li>Built a ROS-compatible Unity (C#) minefield simulator for zero-risk pre-flight testing of a 4-drone swarm.</li>
+            <li>Built a shared mine map for 4 drones by fusing AprilTag detections and pymavlink pose data in SQLite with 1 ft clearance.</li>
+            <li>Enabling hands-free control of each drone by relaying phone voice commands (start, pause, land) over TCP.</li>
+          </ul>
+        </div>
+        <div class="pass-stub">
+          <div><span>Drones</span><b>4</b></div>
+          <div><span>Clearance</span><b>1 ft</b></div>
+          <div><span>Status</span><b class="live">In flight</b></div>
           <div class="barcode" aria-hidden="true"></div>
         </div>
       </div>
@@ -421,6 +427,7 @@
 <script src="assets/vendor/d3-array.min.js" defer></script>
 <script src="assets/vendor/d3-geo.min.js" defer></script>
 <script src="assets/vendor/topojson-client.min.js" defer></script>
+<script src="viz.js" defer></script>
 <script src="app.js" defer></script>
 </body>
 </html>
