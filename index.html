@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Saatvik Kesarwani · Robotics &amp; ECE @ UT Austin</title>
+<meta name="description" content="Saatvik Kesarwani: Electrical & Computer Engineering student in the Robotics Honors Program at UT Austin. Drone swarms, LiDAR, robot arms, and published medical ML.">
+<meta property="og:title" content="Saatvik Kesarwani">
+<meta property="og:description" content="ECE @ UT Austin · Robotics Honors. Drone swarms, LiDAR, robot arms, and published medical ML.">
+<meta property="og:image" content="assets/photos/headshot.jpg">
+<meta name="theme-color" content="#050b09">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23050b09'/%3E%3Crect x='10' y='10' width='44' height='44' rx='6' fill='none' stroke='%23f2a03d' stroke-width='3'/%3E%3Ctext x='32' y='40' font-family='monospace' font-size='20' font-weight='700' fill='%23f2a03d' text-anchor='middle'%3ESK%3C/text%3E%3C/svg%3E">
+<link rel="preload" href="assets/fonts/unbounded-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles.css">
+<script type="importmap">
+{ "imports": { "three": "./assets/vendor/three.module.min.js", "three/addons/": "./assets/vendor/addons/" } }
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<canvas id="scene" aria-hidden="true"></canvas>
+<div class="vignette" aria-hidden="true"></div>
+
+<header class="nav">
+  <a href="#top" class="brand" aria-label="Saatvik Kesarwani, home"><span>SK</span></a>
+  <nav aria-label="Primary">
+    <a href="#projects">Work</a>
+    <a href="#experience">Experience</a>
+    <a href="#about">About</a>
+    <a href="assets/Saatvik_Kesarwani_Resume.pdf" target="_blank" rel="noopener">Résumé</a>
+    <a class="nav-mail" href="mailto:saatvikkesarwani@gmail.com">Email</a>
+  </nav>
+</header>
+
+<!-- progress readout, bottom-left -->
+<div class="hud" aria-hidden="true">
+  <span class="hud-dot"></span><span id="hudLabel">U0 · POWER ON</span><span class="hud-bar"><i id="hudFill"></i></span>
+</div>
+
+<main id="main">
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="top" data-cam="hero">
+  <h1 class="name" aria-label="Saatvik Kesarwani">
+    <span class="line">SAATVIK</span>
+    <span class="line">KESARWANI</span>
+  </h1>
+  <div class="hero-foot">
+    <p class="hero-sub">Electrical &amp; Computer Engineering at <b>UT Austin</b>, Robotics Honors.<br>I build machines that sense, think, and move.</p>
+    <div class="hero-meta">
+      <span>NOW</span>
+      <p>Embedded SWE @ Nesteye<br>Drone swarm @ Texas Aerial Robotics</p>
+    </div>
+    <a class="scroll-cue" href="#projects"><span>Follow the signal</span><i></i></a>
+  </div>
+</section>
+
+<!-- ============ PROJECTS ============ -->
+<section class="builds" id="projects">
+  <div class="builds-panel">
+    <div class="panel-inner">
+      <p class="kicker"><span id="buildIdx">MODULE 01</span> / 06</p>
+      <h2 class="section-title">SIX BUILDS</h2>
+
+      <div class="build-stack">
+        <article class="build" data-i="0">
+          <h3>AcousticTB</h3>
+          <p>A handheld TB screener that listens to a cough. Custom Arduino device with a mic amp, ultrasonic ranging and camera, running a CNN + XGBoost ensemble. Sole author on IEEE TechRxiv.</p>
+          <ul class="stats"><li><b>0.85</b>AUC-ROC</li><li><b>Top 3</b>at 2 hackathons</li><li><b>WHO</b>specificity target beaten</li></ul>
+          <div class="ctas"><a class="btn" href="https://www.techrxiv.org/doi/pdf/10.36227/techrxiv.175742700.07240558/v1" target="_blank" rel="noopener">Read the paper <i>↗</i></a><a class="btn ghost" href="https://github.com/Saatvik538/AcousticTB" target="_blank" rel="noopener">Code <i>↗</i></a></div>
+          <p class="stack">Python · TensorFlow · Keras · XGBoost · Arduino C++ · 3D printing</p>
+        </article>
+
+        <article class="build" data-i="1">
+          <h3>Language-Controlled Robot Arm</h3>
+          <p>Control a real 4-axis Rotrics DexArm in plain English, like "deal the cards." Gemini breaks commands into grab, lift and drop steps, depth sensing plus CV solves spherical coordinates, and a physics twin vets every move before the arm runs it.</p>
+          <ul class="stats"><li><b>95%</b>reach accuracy</li><li><b>88%</b>success in 50 trials</li><li><b>100%</b>unsafe paths blocked</li></ul>
+          <p class="stack">Python · Gemini API · OpenCV · Flask · Three.js · physics simulation</p>
+        </article>
+
+        <article class="build" data-i="2">
+          <h3>OmniGlasses</h3>
+          <p>Glasses with eyes in the back of your head. Three ESP32 cameras stream to a phone over a custom UDP protocol, an FPGA turns collision events into spoken warnings, and a Flutter app tracks eye strain.</p>
+          <ul class="stats"><li><b>~95%</b>rear objects caught</li><li><b>98%</b>blink / squint acc.</li><li><b>3</b>live camera feeds</li></ul>
+          <p class="stack">ESP32-CAM · FPGA · UDP · YOLO · OpenCV · Flutter</p>
+        </article>
+
+        <article class="build" data-i="3">
+          <h3>GaitWay</h3>
+          <p>Turns an iPhone's LiDAR into a clinical gait lab that measures joint angles, stride velocity and postural sway on-device. Clinicians see measurements, never video. Replaces $5.5K–22K/yr rigs.</p>
+          <ul class="stats"><li><b>1st</b>place</li><li><b>100+</b>people tested live</li><li><b>0</b>frames of video shared</li></ul>
+          <div class="ctas"><a class="btn" href="https://github.com/Saatvik538/gaitway" target="_blank" rel="noopener">View code <i>↗</i></a></div>
+          <p class="stack">Swift · ARKit LiDAR · Core ML · Supabase</p>
+        </article>
+
+        <article class="build" data-i="4">
+          <h3>FTC 15167 Robo Troopers</h3>
+          <p>Led CAD, the build and the autonomous code. As alliance captain we won the 2025 Chesapeake State Championship and went to the FIRST World Championship.</p>
+          <ul class="stats"><li><b>Worlds</b>2025</li><li><b>State</b>champions</li><li><b>3</b>major awards</li></ul>
+          <p class="stack">Java · Onshape · Fusion 360 · Inventor · autonomous pathing</p>
+        </article>
+
+        <article class="build" data-i="5">
+          <h3>skadvising.org</h3>
+          <p>I designed, built, deployed and host the site for my tutoring business, and it brought in 100+ client inquiries in its first four months.</p>
+          <ul class="stats"><li><b>100+</b>inquiries</li><li><b>4</b>months</li></ul>
+          <div class="ctas"><a class="btn" href="https://www.skadvising.org/" target="_blank" rel="noopener">Visit site <i>↗</i></a></div>
+          <p class="stack">React · TypeScript · Vite · TanStack Start</p>
+        </article>
+      </div>
+
+      <ol class="build-list" aria-label="Projects">
+        <li><a href="#b0" data-i="0">AcousticTB</a></li>
+        <li><a href="#b1" data-i="1">Robot Arm</a></li>
+        <li><a href="#b2" data-i="2">OmniGlasses</a></li>
+        <li><a href="#b3" data-i="3">GaitWay</a></li>
+        <li><a href="#b4" data-i="4">FTC Robo Troopers</a></li>
+        <li><a href="#b5" data-i="5">skadvising.org</a></li>
+      </ol>
+    </div>
+  </div>
+  <div class="builds-steps" aria-hidden="true">
+    <div class="step" id="b0" data-cam="p0" data-i="0"></div>
+    <div class="step" id="b1" data-cam="p1" data-i="1"></div>
+    <div class="step" id="b2" data-cam="p2" data-i="2"></div>
+    <div class="step" id="b3" data-cam="p3" data-i="3"></div>
+    <div class="step" id="b4" data-cam="p4" data-i="4"></div>
+    <div class="step" id="b5" data-cam="p5" data-i="5"></div>
+  </div>
+</section>
+
+<!-- ============ EXPERIENCE ============ -->
+<section class="experience" id="experience" data-cam="exp">
+  <h2 class="section-title">EXPERIENCE</h2>
+  <div class="trace-wrap">
+    <svg class="trace" viewBox="0 0 1000 24" preserveAspectRatio="none" aria-hidden="true">
+      <path id="tracePath" d="M0 12 H90 L102 4 H190 L202 12 H290 L302 20 H390 L402 12 H490 L502 4 H590 L602 12 H690 L702 20 H790 L802 12 H1000"/>
+    </svg>
+    <ol class="jobs">
+      <li class="job">
+        <span class="node"></span>
+        <img class="shot" src="assets/photos/orangewood.jpg" alt="Orangewood Labs" loading="lazy" onerror="this.remove()">
+        <p class="when">Jun – Aug 2024</p>
+        <h3>Orangewood Labs</h3>
+        <p class="role">Forward-deployed engineering intern</p>
+        <p class="what">YC-backed robot arms. Mapped use cases across 500+ factories and schools and landed 10 product demos and pilot talks.</p>
+      </li>
+      <li class="job">
+        <span class="node"></span>
+        <img class="shot" src="assets/photos/dartmouth.jpg" alt="Dartmouth Hitchcock" loading="lazy" onerror="this.remove()">
+        <p class="when">May 2025 – Aug 2026</p>
+        <h3><a href="https://edit-ai-program.github.io/edit-ai-internship/people/HS_Saatvik_Kesarwani-2026/" target="_blank" rel="noopener">Dartmouth Hitchcock</a></h3>
+        <p class="role">AI/ML research intern → mentor</p>
+        <p class="what">Survival prediction for 397 colorectal cancer patients from slides, RNA-seq, methylation and spatial data. 0.717 C-index. Promoted to mentor 10 interns.</p>
+      </li>
+      <li class="job">
+        <span class="node"></span>
+        <img class="shot" src="assets/photos/obscurity-labs.jpg" alt="Obscurity Labs" loading="lazy" onerror="this.remove()">
+        <p class="when">Jul – Aug 2025</p>
+        <h3>Obscurity Labs</h3>
+        <p class="role">Software engineering intern</p>
+        <p class="what">Go log-deduplication agent that cut bandwidth and storage by 80%. Shipped 5+ TypeScript features on an EDR platform.</p>
+      </li>
+      <li class="job">
+        <span class="node"></span>
+        <img class="shot" src="assets/photos/texas-aerial-robotics.jpg" alt="Texas Aerial Robotics" loading="lazy" onerror="this.remove()">
+        <p class="when">Oct 2026 – Now</p>
+        <h3>Texas Aerial Robotics</h3>
+        <p class="role">Hardware &amp; software, IARC</p>
+        <p class="what">ROS-compatible Unity minefield simulator for a 4-drone swarm, a shared AprilTag mine map, and voice control over TCP.</p>
+      </li>
+      <li class="job now">
+        <span class="node"></span>
+        <img class="shot" src="assets/photos/nesteye.jpg" alt="Nesteye" loading="lazy" onerror="this.remove()">
+        <p class="when">Sep 2026 – Now</p>
+        <h3><a href="https://nesteye.ai/" target="_blank" rel="noopener">Nesteye</a></h3>
+        <p class="role">Embedded software engineering intern</p>
+        <p class="what">Offline-first iOS LiDAR app: 500+ 3D poultry scans at a &gt;90% autonomous success rate, with ARKit motion gating.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ ABOUT / EDUCATION ============ -->
+<section class="about" id="about" data-cam="edu">
+  <div class="about-grid">
+    <div>
+      <h2 class="section-title big">THE UNIVERSITY<br>OF TEXAS AT AUSTIN</h2>
+      <dl class="facts">
+        <div><dt>Studying</dt><dd>Electrical &amp; Computer Engineering, Robotics minor</dd></div>
+        <div><dt>Program</dt><dd>Robotics Honors</dd></div>
+        <div><dt>Graduating</dt><dd>Class of 2029</dd></div>
+        <div><dt>GPA</dt><dd>4.00 / 4.00</dd></div>
+      </dl>
+      <p class="bio">I came up through FIRST robotics and the Computer Systems Lab at Thomas Jefferson High School for Science and Technology. I like problems where the code has to touch the real world, where a bug means a drone drifts or a sensor lies.</p>
+      <ul class="honors">
+        <li><a href="https://asterhacks-2025.devpost.com/project-gallery" target="_blank" rel="noopener"><b>1 / 188</b>Grand Prize, AsterHacks</a></li>
+        <li><a href="https://hackvortex-codestorm-5.devpost.com/project-gallery" target="_blank" rel="noopener"><b>3 / 828</b>HackVortex</a></li>
+        <li><a href="https://hacktj.org/museum#year-2025" target="_blank" rel="noopener"><b>Best</b>Biomedical, HackTJ</a></li>
+        <li><span><b>Worlds</b>FTC State Champions</span></li>
+        <li><span><b>NMS</b>National Merit Scholar</span></li>
+      </ul>
+    </div>
+    <figure class="portrait">
+      <img src="assets/photos/headshot.jpg" alt="Saatvik Kesarwani" width="1000" height="1000" loading="lazy">
+      <figcaption><span>U0 · SAATVIK K.</span><span>AUSTIN, TX</span></figcaption>
+    </figure>
+  </div>
+
+  <div class="skills">
+    <div><h4>Languages</h4><p>Python, C, C++, C#, Go, Java, TypeScript, Swift, SQL, CUDA</p></div>
+    <div><h4>Robotics &amp; HW</h4><p>ROS, Arduino, ESP32, FPGA, I2C/UART, PCB design, oscilloscope</p></div>
+    <div><h4>ML &amp; Vision</h4><p>PyTorch, TensorFlow, scikit-learn, OpenCV, YOLO, Core ML, Hugging Face</p></div>
+    <div><h4>Software &amp; CAD</h4><p>FastAPI, React, PostgreSQL, Docker, Linux · Onshape, Fusion 360, Inventor</p></div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section class="contact" id="contact" data-cam="end">
+  <h2>Say hello <a class="hello-btn" href="mailto:saatvikkesarwani@gmail.com" aria-label="Email Saatvik">→</a></h2>
+  <a class="mail" href="mailto:saatvikkesarwani@gmail.com">saatvikkesarwani@gmail.com</a>
+  <ul class="socials">
+    <li><a href="https://github.com/Saatvik538" target="_blank" rel="noopener">GitHub</a></li>
+    <li><a href="https://www.linkedin.com/in/saatvikk/" target="_blank" rel="noopener">LinkedIn</a></li>
+    <li><a href="https://devpost.com/Saatvik538" target="_blank" rel="noopener">Devpost</a></li>
+    <li><a href="assets/Saatvik_Kesarwani_Resume.pdf" target="_blank" rel="noopener">Résumé</a></li>
+  </ul>
+  <footer><span>© 2026 Saatvik Kesarwani</span><span>Every module on this board is connected.</span></footer>
+</section>
+
+</main>
+
+<script src="ui.js" defer></script>
+<script type="module" src="scene.js"></script>
+</body>
+</html>
