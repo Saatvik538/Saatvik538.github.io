@@ -2,386 +2,485 @@
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const store = { get(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { sessionStorage.setItem(k, v); } catch (e) {} } };
+  const DPR = Math.min(2, devicePixelRatio || 1);
+  const RAD = Math.PI / 180;
 
-  const VIEWS = ['home', 'prg', 'log', 'info', 'comm'];
-  const TITLES = { home: 'HOME', prg: 'F1 PROGRAMS', log: 'F2 EVENT LOG', info: 'F3 OPERATOR', comm: 'F4 COMM' };
-  const body = $('.lcd-body');
-  const leds = Object.fromEntries($$('.led').map((l) => [l.dataset.led, l]));
-  const hdTab = $('#hdTab'), hdState = $('#hdState');
-  const runMsg = $('#runMsg'), runFill = $('#runFill');
-
-  const state = { view: 'home', prg: 0, log: 0, running: false, held: false, line: -1, timer: null, estop: false };
-
-  /* ---------------- views ---------------- */
-  function go(view, push = true) {
-    if (!VIEWS.includes(view)) view = 'home';
-    if (state.estop) return;
-    if (view !== 'prg') stopRun(true);
-    state.view = view;
-    $$('.view').forEach((v) => (v.hidden = v.dataset.view !== view));
-    $$('[data-goto]').forEach((k) => k.classList.toggle('on', k.dataset.goto === view && !k.classList.contains('inline-key')));
-    hdTab.textContent = TITLES[view];
-    body.scrollTop = 0;
-    if (push) history.replaceState(null, '', view === 'home' ? location.pathname : '#' + view);
-  }
-  $$('[data-goto]').forEach((k) => k.addEventListener('click', (e) => { e.preventDefault(); go(k.dataset.goto); }));
-
-  /* ---------------- lists ---------------- */
-  const prgBtns = $$('#prgList button'), prgs = $$('.prg');
-  const logBtns = $$('#logList button'), evs = $$('.ev');
-
-  function selectPrg(i) {
-    state.prg = (i + prgs.length) % prgs.length;
-    stopRun(true);
-    prgBtns.forEach((b, j) => b.classList.toggle('sel', j === state.prg));
-    prgs.forEach((p, j) => (p.hidden = j !== state.prg));
-    prgs[state.prg].querySelectorAll('.tp li').forEach((li) => li.classList.remove('cur', 'done'));
-    runMsg.textContent = `PRG0${state.prg + 1} LOADED · PRESS RUN`;
-    runFill.style.width = '0';
-    prgBtns[state.prg].scrollIntoView({ block: 'nearest', inline: 'nearest' });
-  }
-  function selectLog(i) {
-    state.log = (i + evs.length) % evs.length;
-    logBtns.forEach((b, j) => b.classList.toggle('sel', j === state.log));
-    evs.forEach((p, j) => (p.hidden = j !== state.log));
-    logBtns[state.log].scrollIntoView({ block: 'nearest', inline: 'nearest' });
-  }
-  prgBtns.forEach((b) => b.addEventListener('click', () => selectPrg(+b.dataset.i)));
-  logBtns.forEach((b) => b.addEventListener('click', () => selectLog(+b.dataset.i)));
-
-  /* ---------------- program execution ---------------- */
-  const lines = () => [...prgs[state.prg].querySelectorAll('.tp li')];
-  function setRunUI(mode) {
-    hdState.textContent = mode;
-    leds.run.classList.toggle('on', mode === 'RUN');
-  }
-  function stepLine() {
-    const ls = lines();
-    if (state.line >= 0 && ls[state.line]) { ls[state.line].classList.remove('cur'); ls[state.line].classList.add('done'); }
-    state.line++;
-    if (state.line >= ls.length) { finish(); return false; }
-    ls[state.line].classList.add('cur');
-    ls[state.line].scrollIntoView({ block: 'nearest' });
-    runFill.style.width = `calc(${((state.line + 1) / ls.length) * 100}% - 2px)`;
-    runMsg.textContent = `PRG0${state.prg + 1} · LINE ${state.line + 1}/${ls.length}`;
-    return true;
-  }
-  function startRun() {
-    if (state.estop) return;
-    if (state.view !== 'prg') go('prg');
-    if (state.running && state.held) { state.held = false; setRunUI('RUN'); return; }
-    if (state.running) return;
-    lines().forEach((li) => li.classList.remove('cur', 'done'));
-    state.line = -1; state.running = true; state.held = false;
-    setRunUI('RUN');
-    const tick = () => {
-      if (!state.running) return;
-      if (!state.held && !state.estop && !stepLine()) return;
-      state.timer = setTimeout(tick, 520);
-    };
-    tick();
-  }
-  function finish() {
-    state.running = false; clearTimeout(state.timer);
-    setRunUI('IDLE');
-    runMsg.textContent = `PRG0${state.prg + 1} · PROGRAM END ✓`;
-    runFill.style.width = 'calc(100% - 2px)';
-  }
-  function stopRun(silent) {
-    clearTimeout(state.timer);
-    state.running = false; state.held = false; state.line = -1;
-    setRunUI(state.estop ? 'E-STOP' : 'IDLE');
-    if (!silent) runMsg.textContent = 'ABORTED';
-  }
-  function hold() {
-    if (!state.running) return;
-    state.held = !state.held;
-    setRunUI(state.held ? 'HOLD' : 'RUN');
-  }
-  function step() {
-    if (state.estop) return;
-    if (state.view !== 'prg') go('prg');
-    if (state.running) { state.held = true; setRunUI('HOLD'); }
-    else if (state.line < 0 || state.line >= lines().length) { lines().forEach((li) => li.classList.remove('cur', 'done')); state.line = -1; }
-    if (!state.running) { setRunUI('STEP'); if (!stepLine()) state.line = -1; }
-    else stepLine();
-  }
-
-  /* ---------------- e-stop ---------------- */
-  const estopBtn = $('#estop'), alarm = $('#alarm');
-  function toggleEstop() {
-    state.estop = !state.estop;
-    if (state.estop) { clearTimeout(state.timer); state.running = false; }
-    estopBtn.setAttribute('aria-pressed', state.estop);
-    document.body.classList.toggle('estopped', state.estop);
-    alarm.hidden = !state.estop;
-    leds.fault.classList.toggle('on', state.estop);
-    leds.servo.classList.toggle('on', !state.estop);
-    setRunUI(state.estop ? 'E-STOP' : 'IDLE');
-    if (!state.estop) runMsg.textContent = 'RESET OK · PRESS RUN';
-  }
-  estopBtn.addEventListener('click', toggleEstop);
-  alarm.addEventListener('click', toggleEstop);
-
-  /* ---------------- hardware keys ---------------- */
-  function act(a) {
-    if (state.estop && a !== 'estop') return;
-    const list = state.view === 'log' ? 'log' : 'prg';
-    const sel = (d) => (list === 'log' ? selectLog(state.log + d) : selectPrg(state.prg + d));
-    switch (a) {
-      case 'up': if (state.view === 'prg' || state.view === 'log') sel(-1); else body.scrollBy({ top: -120, behavior: 'smooth' }); break;
-      case 'down': if (state.view === 'prg' || state.view === 'log') sel(1); else body.scrollBy({ top: 120, behavior: 'smooth' }); break;
-      case 'left': go(VIEWS[(VIEWS.indexOf(state.view) + VIEWS.length - 1) % VIEWS.length]); break;
-      case 'right': go(VIEWS[(VIEWS.indexOf(state.view) + 1) % VIEWS.length]); break;
-      case 'enter': if (state.view === 'home') go('prg'); else if (state.view === 'prg') startRun(); else if (state.view === 'info') $('#dither').classList.toggle('on'); break;
-      case 'run': startRun(); break;
-      case 'step': step(); break;
-      case 'hold': hold(); break;
-    }
-  }
-  $$('[data-act]').forEach((k) => k.addEventListener('click', () => act(k.dataset.act)));
-
-  const press = (sel) => { const k = $(sel); if (!k) return; k.classList.add('pressed'); setTimeout(() => k.classList.remove('pressed'), 130); };
-  addEventListener('keydown', (e) => {
-    if (e.metaKey || e.ctrlKey || e.altKey) return;
-    if (document.body.classList.contains('booting')) { endBoot(); e.preventDefault(); return; }
-    const k = e.key;
-    const fn = { F1: 'prg', F2: 'log', F3: 'info', F4: 'comm', F5: 'home', 1: 'prg', 2: 'log', 3: 'info', 4: 'comm', 5: 'home', 0: 'home' }[k];
-    if (fn) { e.preventDefault(); if (state.estop) return; go(fn); press(`.fkey[data-goto="${fn}"]`); return; }
-    const map = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', Enter: 'enter', r: 'run', R: 'run', s: 'step', S: 'step', h: 'hold', H: 'hold', ' ': 'hold' };
-    if (k === 'Escape') { e.preventDefault(); toggleEstop(); estopBtn.focus({ preventScroll: true }); return; }
-    if (map[k]) {
-      const t = e.target;
-      if (k === 'Enter' && t.matches && t.matches('a, button')) return; // let focused controls work normally
-      if (k === ' ' && t.matches && t.matches('a, button')) return;
-      e.preventDefault(); act(map[k]); press(`[data-act="${map[k]}"]`);
-    }
-  });
-
-  /* ---------------- clock ---------------- */
-  const clock = $('#hdClock');
-  const tickClock = () => { const d = new Date(); clock.textContent = d.toTimeString().slice(0, 5); };
-  tickClock(); setInterval(tickClock, 10000);
-
-  /* ---------------- boot ---------------- */
-  const BOOT = [
-    'SK-01 CONTROLLER  v26.11',
-    'CPU ....... UT AUSTIN/ECE',
-    'MEMORY .............. OK',
-    'LIDAR CAM MIC IMU ... OK',
-    'SERVO AMPS .......... ON',
-    'PROGRAMS LOADED ...... 6',
-    'OPERATOR: S. KESARWANI',
-    '',
-    'READY.',
+  /* ====================================================================
+     TRAVEL DATA — edit these lists to update the globe.
+     [longitude, latitude]
+     ==================================================================== */
+  const HOME = { name: 'Austin, Texas', note: 'Home base · UT Austin', at: [-97.74, 30.27] };
+  const BEEN = [
+    { name: 'Alaska', note: 'United States', at: [-149.9, 61.2] },
+    { name: 'Las Vegas, Nevada', note: 'United States', at: [-115.14, 36.17] },
+    { name: 'Hawaii', note: 'United States', at: [-157.86, 21.31] },
+    { name: 'Michigan', note: 'United States', at: [-83.05, 42.33] },
+    { name: 'New York', note: 'East Coast', at: [-74.0, 40.71] },
+    { name: 'New Jersey', note: 'East Coast', at: [-74.45, 40.06] },
+    { name: 'Virginia', note: 'East Coast · where I grew up', at: [-77.05, 38.8] },
+    { name: 'Boston', note: 'East Coast · New England', at: [-71.06, 42.36] },
+    { name: 'The Carolinas', note: 'East Coast', at: [-79.93, 32.78] },
+    { name: 'Florida', note: 'East Coast', at: [-80.19, 25.76] },
+    { name: 'Toronto, Ontario', note: 'Canada', at: [-79.38, 43.65] },
+    { name: 'Puerto Rico', note: 'U.S. territory', at: [-66.1, 18.47] },
+    { name: 'St. Thomas', note: 'U.S. Virgin Islands', at: [-64.93, 18.34] },
+    { name: 'St. John', note: 'U.S. Virgin Islands', at: [-64.74, 18.33] },
+    { name: 'St. Croix', note: 'U.S. Virgin Islands', at: [-64.75, 17.73] },
+    { name: 'Tortola', note: 'British Virgin Islands', at: [-64.62, 18.43] },
+    { name: 'The Bahamas', note: 'Caribbean', at: [-77.35, 25.05] },
+    { name: 'Cancún', note: 'Mexico', at: [-86.85, 21.16] },
+    { name: 'Honduras', note: 'Central America', at: [-86.53, 16.32] },
+    { name: 'Costa Rica', note: 'Central America', at: [-84.09, 9.93] },
+    { name: 'Lisbon', note: 'Portugal', at: [-9.14, 38.72] },
+    { name: 'Madrid', note: 'Spain', at: [-3.7, 40.42] },
+    { name: 'Barcelona', note: 'Spain', at: [2.17, 41.39] },
+    { name: 'Paris', note: 'France', at: [2.35, 48.86] },
+    { name: 'Amsterdam', note: 'Netherlands', at: [4.9, 52.37] },
+    { name: 'Rome', note: 'Italy', at: [12.5, 41.9] },
+    { name: 'Athens', note: 'Greece', at: [23.73, 37.98] },
+    { name: 'Dubai', note: 'United Arab Emirates', at: [55.27, 25.2] },
+    { name: 'India', note: 'New Delhi', at: [77.21, 28.61] },
   ];
-  let bootT = null;
-  function endBoot() { clearTimeout(bootT); document.body.classList.remove('booting'); store.set('booted', '1'); }
-  if (!reduce && !store.get('booted') && !location.hash) {
-    document.body.classList.add('booting');
-    const pre = $('#bootLog'); let i = 0;
-    const next = () => { pre.textContent += BOOT[i++] + '\n'; bootT = setTimeout(i < BOOT.length ? next : endBoot, i < BOOT.length ? 120 : 650); };
-    next();
-    $('#boot').addEventListener('click', endBoot);
-    addEventListener('pointerdown', () => document.body.classList.contains('booting') && endBoot(), { once: true });
+  // Wishlist: placeholders, swap in your own.
+  const NEXT = [
+    { name: 'Tokyo', note: 'Japan', at: [139.69, 35.69] },
+    { name: 'Iceland', note: 'Reykjavík', at: [-21.94, 64.15] },
+    { name: 'Swiss Alps', note: 'Switzerland', at: [7.75, 46.02] },
+    { name: 'Machu Picchu', note: 'Peru', at: [-72.55, -13.16] },
+    { name: 'Cape Town', note: 'South Africa', at: [18.42, -33.92] },
+    { name: 'New Zealand', note: 'Queenstown', at: [168.66, -45.03] },
+  ];
+  const COUNTRIES = ['United States of America', 'Canada', 'Mexico', 'Costa Rica', 'Honduras', 'Bahamas', 'Portugal', 'Spain', 'Italy', 'Greece', 'France', 'Netherlands', 'India', 'United Arab Emirates'];
+  const TERRITORIES = ['Puerto Rico', 'U.S. Virgin Islands', 'British Virgin Islands'];
+  const STATES = ['Maine', 'New Hampshire', 'Massachusetts', 'Rhode Island', 'Connecticut', 'New York', 'New Jersey', 'Pennsylvania', 'Delaware', 'Maryland', 'Virginia', 'North Carolina', 'South Carolina', 'Georgia', 'Florida', 'Alaska', 'Texas', 'Nevada', 'Hawaii', 'Michigan'];
+  const FILL_STATES = [...STATES, 'District of Columbia'];
+  const FILL_COUNTRIES = COUNTRIES.filter((c) => c !== 'United States of America' && c !== 'Canada').concat(['Puerto Rico']);
+
+  $('#statCountries').textContent = COUNTRIES.length;
+  $('#statStates').textContent = STATES.length;
+  const statT = $$('.stats div')[2]; statT.querySelector('b').textContent = TERRITORIES.length; statT.querySelector('span').textContent = 'territories';
+
+  /* ====================================================================
+     NAV
+     ==================================================================== */
+  const nav = $('.nav');
+  const onNav = () => nav.classList.toggle('solid', scrollY > 40);
+  addEventListener('scroll', onNav, { passive: true }); onNav();
+
+  /* ====================================================================
+     STARFIELD (fixed sky)
+     ==================================================================== */
+  const sky = $('#sky'), sg = sky.getContext('2d');
+  let SW = 0, SH = 0, stars = [], shooting = null;
+  function sizeSky() {
+    SW = innerWidth; SH = innerHeight;
+    sky.width = SW * DPR; sky.height = SH * DPR; sg.setTransform(DPR, 0, 0, DPR, 0, 0);
+    const n = Math.round((SW * SH) / 2600);
+    stars = Array.from({ length: n }, () => ({
+      x: Math.random() * SW, y: Math.random() * SH * 1.6, z: Math.random(),
+      r: Math.random() < 0.06 ? 1.6 : Math.random() * 1.1 + 0.3, tw: Math.random() * 6.28, hue: Math.random() < 0.15 ? 'rgba(255,214,170,' : Math.random() < 0.3 ? 'rgba(170,215,255,' : 'rgba(255,255,255,',
+    }));
+  }
+  sizeSky(); addEventListener('resize', sizeSky);
+  function drawSky(t) {
+    sg.clearRect(0, 0, SW, SH);
+    // faint nebula band
+    const g = sg.createLinearGradient(0, 0, SW, SH);
+    g.addColorStop(0, 'rgba(40,60,140,0.10)'); g.addColorStop(0.5, 'rgba(90,50,140,0.06)'); g.addColorStop(1, 'rgba(10,20,40,0)');
+    sg.fillStyle = g; sg.fillRect(0, 0, SW, SH);
+    const sy = scrollY;
+    for (const s of stars) {
+      const y = ((s.y - sy * (0.05 + s.z * 0.18)) % (SH * 1.6) + SH * 1.6) % (SH * 1.6);
+      if (y > SH) continue;
+      const a = 0.35 + 0.65 * Math.abs(Math.sin(t * 0.0012 * (0.5 + s.z) + s.tw));
+      sg.fillStyle = s.hue + (reduce ? 0.8 : a).toFixed(2) + ')';
+      sg.fillRect(s.x, y, s.r, s.r);
+    }
+    if (!reduce) {
+      if (!shooting && Math.random() < 0.004) shooting = { x: Math.random() * SW * 0.8, y: Math.random() * SH * 0.4, life: 0 };
+      if (shooting) {
+        shooting.life += 0.02;
+        const L = 120, x = shooting.x + shooting.life * 500, y = shooting.y + shooting.life * 200;
+        const gr = sg.createLinearGradient(x - L, y - L * 0.4, x, y);
+        gr.addColorStop(0, 'rgba(255,255,255,0)'); gr.addColorStop(1, `rgba(200,235,255,${1 - shooting.life})`);
+        sg.strokeStyle = gr; sg.lineWidth = 1.4; sg.beginPath(); sg.moveTo(x - L, y - L * 0.4); sg.lineTo(x, y); sg.stroke();
+        if (shooting.life >= 1) shooting = null;
+      }
+    }
   }
 
-  /* ---------------- dithered headshot ---------------- */
-  (function dither() {
-    const cv = $('#ditherCanvas'), img = $('#headshot');
-    const draw = () => {
-      const W = cv.width, H = cv.height, g = cv.getContext('2d', { willReadFrequently: true });
-      const sw = img.naturalWidth, sh = img.naturalHeight;
-      const cw = sw * 0.8, ch = cw * (H / W); // 4:5 crop, slightly zoomed
-      g.drawImage(img, (sw - cw) / 2, Math.max(0, (sh - ch) * 0.25), cw, ch, 0, 0, W, H);
-      const d = g.getImageData(0, 0, W, H), p = d.data;
-      const lum = new Float32Array(W * H);
-      for (let i = 0; i < W * H; i++) lum[i] = (p[i * 4] * 0.3 + p[i * 4 + 1] * 0.59 + p[i * 4 + 2] * 0.11) / 255;
-      // contrast lift
-      for (let i = 0; i < lum.length; i++) lum[i] = Math.min(1, Math.max(0, (lum[i] - 0.5) * 1.35 + 0.56));
-      const ink = [23, 33, 26], paper = [170, 185, 155];
-      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
-        const i = y * W + x, old = lum[i], nw = old < 0.5 ? 0 : 1, err = old - nw;
-        lum[i] = nw;
-        if (x + 1 < W) lum[i + 1] += err * 7 / 16;
-        if (y + 1 < H) { if (x > 0) lum[i + W - 1] += err * 3 / 16; lum[i + W] += err * 5 / 16; if (x + 1 < W) lum[i + W + 1] += err / 16; }
-        const c = nw ? paper : ink;
-        p[i * 4] = c[0]; p[i * 4 + 1] = c[1]; p[i * 4 + 2] = c[2]; p[i * 4 + 3] = 255;
-      }
-      g.putImageData(d, 0, 0);
-    };
-    if (img.complete && img.naturalWidth) draw(); else img.addEventListener('load', draw);
-    $('#dither').addEventListener('click', () => $('#dither').classList.toggle('on'));
-  })();
+  /* ====================================================================
+     GEO: build dotted land from world-atlas
+     ==================================================================== */
+  let dotsFine = null, dotsCoarse = null, world = null, states = null, fillShapes = null;
 
-  /* ---------------- LCD pixel animations ---------------- */
-  const INK = '#17211a', FAINT = 'rgba(23,33,26,0.28)';
-  const j1 = $('#j1'), j2 = $('#j2'), tcp = $('#tcp');
-  const trail = [];
-  const pix = (g, x, y, s = 2) => g.fillRect(Math.round(x), Math.round(y), s, s);
-  const line = (g, a, b, c, d, w = 2) => { g.lineWidth = w; g.beginPath(); g.moveTo(Math.round(a), Math.round(b)); g.lineTo(Math.round(c), Math.round(d)); g.stroke(); };
-
-  const ANIM = {
-    home(g, t, W, H) {
-      const bx = W / 2, by = H - 24, L1 = 62, L2 = 50;
-      const tx = bx + Math.sin(t * 0.7) * 70, ty = by - 70 + Math.sin(t * 1.4) * 30;
-      let dx = tx - bx, dy = by - ty, d = Math.hypot(dx, dy);
-      d = Math.min(d, L1 + L2 - 1);
-      const c2 = (d * d - L1 * L1 - L2 * L2) / (2 * L1 * L2);
-      const q2 = -Math.acos(Math.max(-1, Math.min(1, c2)));
-      const q1 = Math.atan2(dy, dx) - Math.atan2(L2 * Math.sin(q2), L1 + L2 * Math.cos(q2));
-      const ex = bx + L1 * Math.cos(q1), ey = by - L1 * Math.sin(q1);
-      const px = ex + L2 * Math.cos(q1 + q2), py = ey - L2 * Math.sin(q1 + q2);
-      trail.push([px, py]); if (trail.length > 60) trail.shift();
-      g.fillStyle = FAINT; trail.forEach(([x, y], i) => i % 2 || pix(g, x, y));
-      g.strokeStyle = INK; g.fillStyle = INK;
-      line(g, 10, by + 10, W - 10, by + 10, 2);
-      for (let x = 14; x < W - 10; x += 8) line(g, x, by + 12, x - 5, by + 18, 1);
-      g.fillRect(bx - 16, by - 2, 32, 12);
-      line(g, bx, by, ex, ey, 6); line(g, ex, ey, px, py, 4);
-      g.fillStyle = '#aab99b'; [[bx, by], [ex, ey]].forEach(([x, y]) => { g.beginPath(); g.arc(x, y, 4, 0, 7); g.fill(); g.stroke(); });
-      g.fillStyle = INK; g.fillRect(px - 3, py - 3, 6, 6);
-      g.strokeStyle = FAINT; g.lineWidth = 1; g.beginPath(); g.arc(Math.round(tx), Math.round(ty), 6, 0, 7); g.stroke();
-      if (j1) { j1.textContent = (q1 * 57.3).toFixed(1); j2.textContent = (q2 * 57.3).toFixed(1); tcp.textContent = `${Math.round(px - bx)},${Math.round(by - py)}`; }
-    },
-    acoustic(g, t, W, H) {
-      g.strokeStyle = INK; g.fillStyle = INK;
-      g.lineWidth = 2; g.strokeRect(10, 30, 46, 70); g.beginPath(); g.arc(33, 52, 11, 0, 7); g.stroke();
-      for (let i = 0; i < 4; i++) pix(g, 26 + i * 4, 52);
-      g.fillRect(18, 86, 8, 6); g.fillRect(40, 86, 8, 6);
-      // waveform: cough bursts
-      const ph = (t * 0.6) % 1;
-      g.beginPath(); g.lineWidth = 1.5;
-      for (let x = 66; x < W - 8; x++) {
-        const u = (x - 66) / (W - 74);
-        const env = Math.exp(-((u - ph) ** 2) / 0.006) + 0.5 * Math.exp(-((u - ph + 0.18) ** 2) / 0.004);
-        const y = 42 + Math.sin(x * 1.3 + t * 20) * 24 * env + Math.sin(x * 0.4) * 1.5;
-        x === 66 ? g.moveTo(x, y) : g.lineTo(x, y);
+  function buildDots(landFeature, visitedFeature, step) {
+    const W = 1440, H = 720;
+    const mk = () => { const c = document.createElement('canvas'); c.width = W; c.height = H; return c; };
+    const proj = d3.geoEquirectangular().scale(W / (2 * Math.PI)).translate([W / 2, H / 2]);
+    const a = mk(), ag = a.getContext('2d', { willReadFrequently: true });
+    ag.fillStyle = '#fff'; ag.beginPath(); d3.geoPath(proj, ag)(landFeature); ag.fill();
+    const b = mk(), bg = b.getContext('2d', { willReadFrequently: true });
+    bg.fillStyle = '#fff'; bg.beginPath(); d3.geoPath(proj, bg)(visitedFeature); bg.fill();
+    const A = ag.getImageData(0, 0, W, H).data, B = bg.getImageData(0, 0, W, H).data;
+    const out = [];
+    for (let lat0 = -84; lat0 <= 84; lat0 += step) {
+      const dl = step / Math.max(0.15, Math.cos(lat0 * RAD));
+      for (let lon0 = -180 + Math.random() * dl; lon0 < 180; lon0 += dl) {
+        // a little jitter breaks up the moire of perfectly regular rows
+        const lon = lon0 + (Math.random() - 0.5) * dl * 0.5, lat = lat0 + (Math.random() - 0.5) * step * 0.5;
+        const [px, py] = proj([lon, lat]);
+        const i = ((py | 0) * W + (px | 0)) * 4;
+        if (A[i] > 100) out.push({ lam: lon * RAD, sp: Math.sin(lat * RAD), cp: Math.cos(lat * RAD), v: B[i] > 100 ? 1 : 0, s: Math.random() });
       }
-      g.stroke();
-      for (let i = 0; i < 16; i++) {
-        const h = 4 + Math.abs(Math.sin(t * 3 + i * 0.7) * Math.sin(t * 1.1 + i * 0.3)) * 36 * Math.exp(-((i - 6) ** 2) / 40);
-        g.fillRect(68 + i * 8, H - 10 - h, 6, h);
-      }
-    },
-    arm(g, t, W, H) {
-      g.strokeStyle = INK; g.fillStyle = INK;
-      const by = H - 14; line(g, 6, by, W - 6, by, 2);
-      const bx = W / 2; g.fillRect(bx - 12, by - 8, 24, 8);
-      const cyc = (t * 0.35) % 1, carrying = cyc > 0.1 && cyc < 0.55;
-      const src = [36, by - 8], dst = [W - 40, by - 8];
-      let u = cyc < 0.55 ? Math.min(1, Math.max(0, (cyc - 0.1) / 0.45)) : 1 - Math.min(1, (cyc - 0.55) / 0.45);
-      u = u * u * (3 - 2 * u);
-      const tx = src[0] + (dst[0] - src[0]) * u, ty = src[1] - Math.sin(u * Math.PI) * 52;
-      const L1 = 54, L2 = 50, dx = tx - bx, dy = by - 8 - ty, d = Math.min(Math.hypot(dx, dy), L1 + L2 - 1);
-      const qa = Math.acos(Math.max(-1, Math.min(1, (d * d - L1 * L1 - L2 * L2) / (2 * L1 * L2))));
-      // pick whichever elbow solution keeps the elbow up
-      const sol = [qa, -qa].map((q2) => { const q1 = Math.atan2(dy, dx) - Math.atan2(L2 * Math.sin(q2), L1 + L2 * Math.cos(q2)); return [q1, by - 8 - L1 * Math.sin(q1)]; });
-      const [q1] = sol[0][1] < sol[1][1] ? sol[0] : sol[1];
-      const ex = bx + L1 * Math.cos(q1), ey = by - 8 - L1 * Math.sin(q1);
-      line(g, bx, by - 8, ex, ey, 5); line(g, ex, ey, tx, ty, 3);
-      line(g, tx - 5, ty, tx - 5, ty + 7, 2); line(g, tx + 5, ty, tx + 5, ty + 7, 2);
-      // stack + dealt pile
-      const dealt = Math.floor(t * 0.35) % 5;
-      for (let i = 0; i < 5 - dealt; i++) g.fillRect(src[0] - 12, by - 3 - i * 3, 24, 2);
-      for (let i = 0; i < dealt; i++) g.fillRect(dst[0] - 12 + i * 2, by - 3 - i * 3, 24, 2);
-      if (carrying) g.fillRect(tx - 12, ty + 8, 24, 2);
-    },
-    glasses(g, t, W, H) {
-      g.strokeStyle = INK; g.fillStyle = INK;
-      const cx = W / 2;
-      g.lineWidth = 2; g.strokeRect(cx - 52, 12, 40, 24); g.strokeRect(cx + 12, 12, 40, 24); line(g, cx - 12, 20, cx + 12, 20, 2);
-      g.fillRect(cx - 3, 38, 6, 6);
-      // rear radar fan
-      const a0 = Math.PI / 2 + Math.sin(t * 1.2) * 0.55;
-      g.fillStyle = FAINT; g.beginPath(); g.moveTo(cx, 44); g.arc(cx, 44, 78, a0 - 0.32, a0 + 0.32); g.fill();
-      g.strokeStyle = FAINT; g.lineWidth = 1;
-      for (let r = 20; r <= 78; r += 19) { g.beginPath(); g.arc(cx, 44, r, 0.4, Math.PI - 0.4); g.stroke(); }
-      g.fillStyle = INK;
-      for (let k = 0; k < 3; k++) {
-        const ph = (t * 0.5 + k / 3) % 1, ang = Math.PI / 2 + Math.sin(k * 2.1 + Math.floor(t * 0.5 + k / 3)) * 0.7, r = 78 - ph * 50;
-        const x = cx + Math.cos(ang) * r, y = 44 + Math.sin(ang) * r;
-        g.fillRect(Math.round(x) - 2, Math.round(y) - 2, 5, 5);
-        if (ph > 0.75 && (t * 8) % 2 < 1) { g.font = '14px VT323'; g.fillText('! REAR', 6, H - 6); }
-      }
-    },
-    gait(g, t, W, H) {
-      g.strokeStyle = INK; g.fillStyle = INK;
-      const gy = H - 14; line(g, 4, gy, W - 4, gy, 2);
-      const x = 20 + ((t * 28) % (W - 30)), s = Math.sin(t * 6);
-      const hip = [x, gy - 34];
-      g.beginPath(); g.arc(x, gy - 62, 6, 0, 7); g.stroke();
-      line(g, x, gy - 56, hip[0], hip[1], 2);
-      line(g, x, gy - 50, x + s * 10, gy - 38, 2); line(g, x, gy - 50, x - s * 10, gy - 38, 2);
-      const k1 = [x + s * 8, gy - 17], k2 = [x - s * 8, gy - 17];
-      line(g, hip[0], hip[1], k1[0], k1[1], 2); line(g, k1[0], k1[1], x + s * 12, gy, 2);
-      line(g, hip[0], hip[1], k2[0], k2[1], 2); line(g, k2[0], k2[1], x - s * 12, gy, 2);
-      // footprints behind
-      for (let fx = x - 14; fx > 6; fx -= 14) g.fillRect(Math.round(fx), gy + 4 + ((Math.round(fx / 14)) % 2) * 4, 5, 2);
-      // lidar dots on the body
-      g.fillStyle = FAINT;
-      for (let i = 0; i < 26; i++) pix(g, x - 14 + ((i * 37 + Math.floor(t * 12)) % 28), gy - 70 + ((i * 53) % 70), 2);
-      g.fillStyle = INK; g.font = '14px VT323'; g.fillText(`KNEE ${Math.round(150 + s * 22)}°`, W - 64, 14);
-    },
-    ftc(g, t, W, H) {
-      g.strokeStyle = INK; g.fillStyle = INK;
-      g.lineWidth = 2; g.strokeRect(6, 6, W - 12, H - 12);
-      g.strokeStyle = FAINT; g.lineWidth = 1;
-      for (let x = 6; x < W; x += (W - 12) / 6) line(g, x, 6, x, H - 6, 1);
-      for (let y = 6; y < H; y += (H - 12) / 4) line(g, 6, y, W - 6, y, 1);
-      const a = t * 0.9, cx = W / 2 + Math.sin(a) * 62, cy = H / 2 + Math.sin(a * 2) * 30;
-      const dx = Math.cos(a) * 62, dy = Math.cos(a * 2) * 60, ang = Math.atan2(dy, dx);
-      g.fillStyle = FAINT;
-      for (let k = 1; k < 30; k++) { const b = a - k * 0.08; pix(g, W / 2 + Math.sin(b) * 62, H / 2 + Math.sin(b * 2) * 30, 2); }
-      g.save(); g.translate(Math.round(cx), Math.round(cy)); g.rotate(ang);
-      g.fillStyle = INK; g.fillRect(-9, -8, 18, 16); g.fillStyle = '#aab99b'; g.fillRect(3, -3, 5, 6);
-      g.fillStyle = INK; g.fillRect(-11, -10, 6, 3); g.fillRect(5, -10, 6, 3); g.fillRect(-11, 7, 6, 3); g.fillRect(5, 7, 6, 3);
-      g.restore();
-    },
-    web(g, t, W, H) {
-      g.strokeStyle = INK; g.fillStyle = INK;
-      g.lineWidth = 2; g.strokeRect(8, 8, W - 16, H - 16); line(g, 8, 20, W - 8, 20, 2);
-      for (let i = 0; i < 3; i++) g.fillRect(13 + i * 6, 12, 3, 3);
-      g.font = '13px VT323'; g.fillText('skadvising.org', 40, 17);
-      const n = Math.min(100, Math.floor(((t * 22) % 140)));
-      const bars = 12;
-      for (let i = 0; i < bars; i++) {
-        const v = Math.min(1, n / 100) * (0.25 + (i / bars) * 0.75) * (0.85 + 0.15 * Math.sin(i * 2.3));
-        const h = v * 58; g.fillRect(18 + i * 10, H - 16 - h, 7, h);
-      }
-      g.font = '26px VT323'; g.fillText(`${n}${n >= 100 ? '+' : ''}`, W - 64, 46);
-      g.font = '13px VT323'; g.fillText('INQUIRIES', W - 64, 58);
-    },
-  };
-
-  const canvases = $$('canvas.anim').map((c) => {
-    const host = c.closest('[data-anim]') || c;
-    return { c, g: c.getContext('2d'), kind: c.dataset.anim || host.dataset.anim };
-  });
-  let last = performance.now(), simT = 0;
-  function loop(now) {
-    const dt = Math.min(0.05, (now - last) / 1000); last = now;
-    if (!state.estop) simT += dt * (state.running && !state.held ? 2 : 1);
-    for (const a of canvases) {
-      if (!a.c.offsetParent) continue;
-      if (state.estop && a.drawn) continue;
-      const { c, g } = a;
-      g.clearRect(0, 0, c.width, c.height);
-      ANIM[a.kind] && ANIM[a.kind](g, simT, c.width, c.height);
-      a.drawn = true;
     }
-    if (!reduce) requestAnimationFrame(loop);
+    return out;
+  }
+
+  // orthographic projection helpers (center lon0/lat0 in degrees)
+  function makeOrtho(lon0, lat0, R, cx, cy) {
+    const l0 = lon0 * RAD, sp0 = Math.sin(lat0 * RAD), cp0 = Math.cos(lat0 * RAD);
+    return {
+      dot(d, out) { const dl = d.lam - l0, cdl = Math.cos(dl); const z = sp0 * d.sp + cp0 * d.cp * cdl; if (z <= 0) return 0; out[0] = cx + R * d.cp * Math.sin(dl); out[1] = cy - R * (cp0 * d.sp - sp0 * d.cp * cdl); return z; },
+      pt(lon, lat, lift = 1) {
+        const dl = lon * RAD - l0, sp = Math.sin(lat * RAD), cp = Math.cos(lat * RAD), cdl = Math.cos(dl);
+        const z = sp0 * sp + cp0 * cp * cdl;
+        return [cx + R * lift * cp * Math.sin(dl), cy - R * lift * (cp0 * sp - sp0 * cp * cdl), z];
+      },
+    };
+  }
+
+  /* ====================================================================
+     HERO EARTH (horizon)
+     ==================================================================== */
+  const earth = $('#earth'), eg = earth.getContext('2d');
+  let EW = 0, EH = 0, heroVisible = true;
+  function sizeEarth() { const r = earth.getBoundingClientRect(); EW = r.width; EH = r.height; earth.width = EW * DPR; earth.height = EH * DPR; eg.setTransform(DPR, 0, 0, DPR, 0, 0); }
+  sizeEarth(); addEventListener('resize', sizeEarth);
+  new IntersectionObserver(([e]) => (heroVisible = e.isIntersecting)).observe($('.hero'));
+
+  const tmp = [0, 0];
+  const buckets = Array.from({ length: 6 }, () => []);
+  function drawEarth(t) {
+    eg.clearRect(0, 0, EW, EH);
+    const R = Math.max(EW * 0.78, EH * 2.4), cx = EW / 2, cy = EH * 0.3 + R;
+    // atmosphere
+    const atm = eg.createRadialGradient(cx, cy, R * 0.98, cx, cy, R * 1.09);
+    atm.addColorStop(0, 'rgba(90,190,255,0.55)'); atm.addColorStop(0.25, 'rgba(60,150,255,0.22)'); atm.addColorStop(1, 'rgba(40,100,255,0)');
+    eg.fillStyle = atm; eg.beginPath(); eg.arc(cx, cy, R * 1.09, 0, 7); eg.fill();
+    // sunrise glint on the limb
+    const sun = eg.createRadialGradient(cx + R * 0.38, cy - R * 0.93, 0, cx + R * 0.38, cy - R * 0.93, R * 0.42);
+    sun.addColorStop(0, 'rgba(255,190,120,0.55)'); sun.addColorStop(0.3, 'rgba(255,140,90,0.15)'); sun.addColorStop(1, 'rgba(255,120,80,0)');
+    // ocean body
+    const oc = eg.createLinearGradient(0, cy - R, 0, cy - R + EH);
+    oc.addColorStop(0, '#0b2350'); oc.addColorStop(0.4, '#06142e'); oc.addColorStop(1, '#030914');
+    eg.fillStyle = oc; eg.beginPath(); eg.arc(cx, cy, R, 0, 7); eg.fill();
+    eg.save(); eg.beginPath(); eg.arc(cx, cy, R, 0, 7); eg.clip();
+    eg.fillStyle = sun; eg.fillRect(0, 0, EW, EH);
+    if (dotsFine) {
+      const lon0 = HOME.at[0] + 40 - (reduce ? 0 : t * 0.0012), lat0 = 52;
+      const P = makeOrtho(lon0, lat0, R, cx, cy);
+      buckets.forEach((b) => (b.length = 0));
+      for (const d of dotsFine) {
+        const z = P.dot(d, tmp); if (!z) continue;
+        if (tmp[1] < -4 || tmp[1] > EH + 4 || tmp[0] < -4 || tmp[0] > EW + 4) continue;
+        const k = d.v ? 5 : Math.min(4, (z * 5) | 0);
+        buckets[k].push(tmp[0], tmp[1], d.s);
+      }
+      const cols = ['rgba(120,170,255,0.10)', 'rgba(120,180,255,0.20)', 'rgba(130,195,255,0.32)', 'rgba(140,210,255,0.45)', 'rgba(160,225,255,0.6)', 'rgba(255,190,110,0.85)'];
+      const size = Math.max(1.4, R / 650);
+      buckets.forEach((b, k) => {
+        eg.fillStyle = cols[k];
+        for (let i = 0; i < b.length; i += 3) eg.fillRect(b[i], b[i + 1], size, size);
+      });
+      // city-light twinkles on visited land
+      if (!reduce) {
+        eg.fillStyle = 'rgba(255,230,180,0.9)';
+        const b = buckets[5];
+        for (let i = 0; i < b.length; i += 3) if (Math.sin(t * 0.003 + b[i + 2] * 60) > 0.96) eg.fillRect(b[i] - 0.5, b[i + 1] - 0.5, size + 1, size + 1);
+      }
+      // home pin
+      const [hx, hy, hz] = P.pt(HOME.at[0], HOME.at[1]);
+      if (hz > 0 && hy < EH) { const pr = 4 + ((t * 0.002) % 1) * 14; eg.strokeStyle = `rgba(255,179,92,${1 - ((t * 0.002) % 1)})`; eg.lineWidth = 1.5; eg.beginPath(); eg.arc(hx, hy, pr, 0, 7); eg.stroke(); eg.fillStyle = '#ffb35c'; eg.beginPath(); eg.arc(hx, hy, 3.5, 0, 7); eg.fill(); }
+    }
+    eg.restore();
+    // crisp limb line
+    eg.strokeStyle = 'rgba(160,220,255,0.55)'; eg.lineWidth = 1.2; eg.beginPath(); eg.arc(cx, cy, R, Math.PI * 1.05, Math.PI * 1.95); eg.stroke();
+  }
+
+  /* ====================================================================
+     INTERACTIVE GLOBE
+     ==================================================================== */
+  const globe = $('#globe'), gg = globe.getContext('2d'), tip = $('#globeTip');
+  let GW = 0, globeVisible = false;
+  const view = { lon: HOME.at[0], lat: 25, vlon: 0, vlat: 0, drag: false, idle: 0, target: null };
+  function sizeGlobe() { const r = globe.getBoundingClientRect(); GW = r.width; globe.width = GW * DPR; globe.height = GW * DPR; gg.setTransform(DPR, 0, 0, DPR, 0, 0); }
+  sizeGlobe(); addEventListener('resize', sizeGlobe);
+  new IntersectionObserver(([e]) => (globeVisible = e.isIntersecting), { rootMargin: '100px' }).observe(globe);
+
+  // drag to spin
+  let last = null;
+  globe.addEventListener('pointerdown', (e) => { view.drag = true; view.target = null; last = [e.clientX, e.clientY, performance.now()]; globe.setPointerCapture(e.pointerId); globe.classList.add('drag'); });
+  globe.addEventListener('pointermove', (e) => {
+    if (view.drag && last) {
+      const k = 180 / (GW * 0.42 * Math.PI) * 1.0;
+      const dx = e.clientX - last[0], dy = e.clientY - last[1];
+      view.lon -= dx * k; view.lat = Math.max(-70, Math.min(70, view.lat + dy * k));
+      view.vlon = -dx * k; view.vlat = dy * k;
+      last = [e.clientX, e.clientY];
+      view.idle = 0;
+    }
+    hover(e);
+  });
+  const endDrag = () => { view.drag = false; globe.classList.remove('drag'); };
+  globe.addEventListener('pointerup', endDrag); globe.addEventListener('pointercancel', endDrag);
+  globe.addEventListener('pointerleave', () => { tip.hidden = true; hoverPin = null; });
+
+  const ALL = [{ ...HOME, kind: 'home' }, ...BEEN.map((p) => ({ ...p, kind: 'been' })), ...NEXT.map((p) => ({ ...p, kind: 'next' }))];
+  let screenPins = [], hoverPin = null;
+  function hover(e) {
+    const r = globe.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+    let best = null, bd = 16;
+    for (const p of screenPins) { const d = Math.hypot(p.x - x, p.y - y); if (d < bd) { bd = d; best = p; } }
+    hoverPin = best ? best.p : null;
+    if (best) { tip.hidden = false; tip.style.left = best.x + 'px'; tip.style.top = best.y + 'px'; tip.innerHTML = `<b>${best.p.name}</b><span>${best.p.kind === 'next' ? 'Next on the list · ' : best.p.kind === 'home' ? '' : 'Been there · '}${best.p.note}</span>`; }
+    else tip.hidden = true;
+  }
+  globe.addEventListener('click', () => { if (hoverPin) flyTo(hoverPin); });
+
+  function flyTo(p) { view.target = [p.at[0], Math.max(-60, Math.min(60, p.at[1]))]; view.idle = 0; highlight(p); }
+
+  function drawGlobe(t) {
+    const W = GW, R = W * 0.4, cx = W / 2, cy = W / 2;
+    gg.clearRect(0, 0, W, W);
+    // outer glow + rim
+    const halo = gg.createRadialGradient(cx, cy, R * 0.9, cx, cy, R * 1.28);
+    halo.addColorStop(0, 'rgba(63,183,255,0.35)'); halo.addColorStop(0.3, 'rgba(63,140,255,0.12)'); halo.addColorStop(1, 'rgba(63,120,255,0)');
+    gg.fillStyle = halo; gg.beginPath(); gg.arc(cx, cy, R * 1.28, 0, 7); gg.fill();
+    const body = gg.createRadialGradient(cx - R * 0.35, cy - R * 0.4, R * 0.1, cx, cy, R);
+    body.addColorStop(0, '#12305e'); body.addColorStop(0.6, '#081a38'); body.addColorStop(1, '#040b1c');
+    gg.fillStyle = body; gg.beginPath(); gg.arc(cx, cy, R, 0, 7); gg.fill();
+
+    const P = makeOrtho(view.lon, view.lat, R, cx, cy);
+    // graticule
+    gg.strokeStyle = 'rgba(137,200,255,0.07)'; gg.lineWidth = 1;
+    for (let lon = -180; lon < 180; lon += 30) { gg.beginPath(); let pen = false; for (let lat = -90; lat <= 90; lat += 3) { const [x, y, z] = P.pt(lon, lat); if (z > 0) { pen ? gg.lineTo(x, y) : gg.moveTo(x, y); pen = true; } else pen = false; } gg.stroke(); }
+    for (let lat = -60; lat <= 60; lat += 30) { gg.beginPath(); let pen = false; for (let lon = -180; lon <= 180; lon += 3) { const [x, y, z] = P.pt(lon, lat); if (z > 0) { pen ? gg.lineTo(x, y) : gg.moveTo(x, y); pen = true; } else pen = false; } gg.stroke(); }
+
+    if (dotsCoarse) {
+      // visited regions, filled softly
+      const proj = d3.geoOrthographic().scale(R).translate([cx, cy]).rotate([-view.lon, -view.lat]).clipAngle(90);
+      const path = d3.geoPath(proj, gg);
+      gg.beginPath(); path(fillShapes); gg.fillStyle = 'rgba(137,230,255,0.13)'; gg.fill();
+      gg.strokeStyle = 'rgba(137,230,255,0.35)'; gg.lineWidth = 0.6; gg.stroke();
+      // land dots
+      buckets.forEach((b) => (b.length = 0));
+      for (const d of dotsCoarse) {
+        const z = P.dot(d, tmp); if (!z) continue;
+        buckets[d.v ? 5 : Math.min(4, (z * 5) | 0)].push(tmp[0], tmp[1]);
+      }
+      const cols = ['rgba(120,160,230,0.12)', 'rgba(120,170,240,0.22)', 'rgba(130,185,250,0.34)', 'rgba(140,200,255,0.46)', 'rgba(150,210,255,0.56)', 'rgba(137,230,255,0.95)'];
+      const s = Math.max(1.5, R / 160);
+      buckets.forEach((b, k) => { gg.fillStyle = cols[k]; for (let i = 0; i < b.length; i += 2) gg.fillRect(b[i] - s / 2, b[i + 1] - s / 2, s, s); });
+    }
+
+    // flight arcs from Austin
+    const tt = reduce ? 0 : t * 0.00025;
+    for (let i = 0; i < ALL.length; i++) {
+      const p = ALL[i]; if (p.kind === 'home') continue;
+      const interp = d3.geoInterpolate(HOME.at, p.at), dist = d3.geoDistance(HOME.at, p.at);
+      const lift = 0.06 + dist * 0.09, N = 48;
+      gg.beginPath(); let pen = false;
+      for (let k = 0; k <= N; k++) {
+        const u = k / N, [lon, lat] = interp(u), [x, y, z] = P.pt(lon, lat, 1 + Math.sin(u * Math.PI) * lift);
+        if (z > -0.05) { pen ? gg.lineTo(x, y) : gg.moveTo(x, y); pen = true; } else pen = false;
+      }
+      const on = hoverPin === p || activeStamp === p;
+      gg.strokeStyle = p.kind === 'next' ? `rgba(255,122,144,${on ? 0.9 : 0.35})` : `rgba(137,230,255,${on ? 1 : 0.32})`;
+      gg.lineWidth = on ? 1.8 : 1; gg.setLineDash(p.kind === 'next' ? [3, 4] : []); gg.stroke(); gg.setLineDash([]);
+      // moving "plane" dot along each arc
+      if (p.kind === 'been') {
+        const u = (tt + i * 0.137) % 1, [lon, lat] = interp(u), [x, y, z] = P.pt(lon, lat, 1 + Math.sin(u * Math.PI) * lift);
+        if (z > 0) { gg.fillStyle = 'rgba(220,250,255,0.95)'; gg.fillRect(x - 1.5, y - 1.5, 3, 3); }
+      }
+    }
+
+    // pins
+    screenPins = [];
+    for (const p of ALL) {
+      const [x, y, z] = P.pt(p.at[0], p.at[1]);
+      if (z <= 0.02) continue;
+      screenPins.push({ x, y, p });
+      const on = hoverPin === p || activeStamp === p;
+      if (p.kind === 'home') {
+        const ph = reduce ? 0.5 : (t * 0.0012) % 1;
+        gg.strokeStyle = `rgba(255,179,92,${1 - ph})`; gg.lineWidth = 2; gg.beginPath(); gg.arc(x, y, 5 + ph * 20, 0, 7); gg.stroke();
+        gg.fillStyle = '#ffb35c'; gg.shadowColor = '#ffb35c'; gg.shadowBlur = 14; gg.beginPath(); gg.arc(x, y, 5.5, 0, 7); gg.fill(); gg.shadowBlur = 0;
+        gg.font = '600 12px Manrope, sans-serif'; gg.fillStyle = '#ffd7a8'; gg.fillText('AUSTIN · NOW', x + 10, y + 4);
+      } else if (p.kind === 'been') {
+        gg.fillStyle = on ? '#ffffff' : '#89e6ff'; gg.shadowColor = '#89e6ff'; gg.shadowBlur = on ? 16 : 8;
+        gg.beginPath(); gg.arc(x, y, on ? 4.5 : 3, 0, 7); gg.fill(); gg.shadowBlur = 0;
+      } else {
+        gg.strokeStyle = '#ff7a90'; gg.lineWidth = 1.6; gg.setLineDash([2, 2]); gg.beginPath(); gg.arc(x, y, on ? 6 : 4.5, 0, 7); gg.stroke(); gg.setLineDash([]);
+      }
+      if (on && p.kind !== 'home') { gg.font = '600 12px Manrope, sans-serif'; gg.fillStyle = '#fff'; gg.fillText(p.name, x + 9, y - 8); }
+    }
+    // rim light
+    gg.strokeStyle = 'rgba(160,225,255,0.35)'; gg.lineWidth = 1.2; gg.beginPath(); gg.arc(cx, cy, R, 0, 7); gg.stroke();
+  }
+
+  function stepGlobe(dt) {
+    if (view.target) {
+      let dl = ((view.target[0] - view.lon + 540) % 360) - 180;
+      view.lon += dl * Math.min(1, dt * 4); view.lat += (view.target[1] - view.lat) * Math.min(1, dt * 4);
+      if (Math.abs(dl) < 0.2 && Math.abs(view.target[1] - view.lat) < 0.2) view.target = null;
+    } else if (!view.drag) {
+      view.lon += view.vlon; view.lat = Math.max(-70, Math.min(70, view.lat + view.vlat));
+      view.vlon *= 0.93; view.vlat *= 0.93;
+      view.idle += dt;
+      if (view.idle > 2.5 && !reduce) view.lon += dt * 6;
+    }
+  }
+
+  /* stamps list */
+  const stampsEl = $('#stamps');
+  let activeStamp = null;
+  const stampBtns = new Map();
+  function group(label, list, cls) {
+    const h = document.createElement('p'); h.className = 'stamps-label'; h.textContent = label; stampsEl.appendChild(h);
+    for (const p of list) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'stamp ' + cls; b.textContent = p.name;
+      const ref = ALL.find((a) => a.name === p.name);
+      b.addEventListener('click', () => flyTo(ref)); b.addEventListener('mouseenter', () => highlight(ref));
+      stampsEl.appendChild(b); stampBtns.set(ref, b);
+    }
+  }
+  function highlight(p) { activeStamp = p; stampBtns.forEach((b, k) => b.classList.toggle('on', k === p)); }
+  group('Home base', [HOME], 'home');
+  group(`Been there · ${BEEN.length} stops`, BEEN, 'been');
+  group('Next on the list', NEXT, 'next');
+
+  /* open globe from hero */
+  function openGlobe() { $('#map').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' }); setTimeout(() => flyTo(ALL[0]), 500); }
+  $('#earthHit').addEventListener('click', openGlobe);
+  $('#openGlobe').addEventListener('click', openGlobe);
+
+  /* load geo */
+  Promise.all([fetch('assets/data/countries-110m.json').then((r) => r.json()), fetch('assets/data/states-10m.json').then((r) => r.json())]).then(([w, s]) => {
+    world = w; states = s;
+    const countries = topojson.feature(w, w.objects.countries).features;
+    const st = topojson.feature(s, s.objects.states).features;
+    const land = { type: 'FeatureCollection', features: countries };
+    fillShapes = { type: 'FeatureCollection', features: [...countries.filter((f) => FILL_COUNTRIES.includes(f.properties.name)), ...st.filter((f) => FILL_STATES.includes(f.properties.name))] };
+    dotsFine = buildDots(land, fillShapes, 0.55);
+    dotsCoarse = buildDots(land, fillShapes, 1.5);
+  }).catch((e) => console.warn('geo data failed', e));
+
+  /* ====================================================================
+     DEPARTURES BOARD
+     ==================================================================== */
+  const stops = $$('.stop');
+  const boardRows = $('#boardRows');
+  const flap = (txt) => `<span class="flap">${[...txt.toUpperCase()].map((c) => `<i data-c="${c === ' ' ? '&nbsp;' : c}">${c === ' ' ? '&nbsp;' : c}</i>`).join('')}</span>`;
+  stops.forEach((s) => {
+    const live = /flight/i.test(s.dataset.status);
+    const b = document.createElement('button'); b.className = 'board-row'; b.type = 'button'; b.setAttribute('role', 'row');
+    b.innerHTML = `<span class="yr" role="cell">${flap(s.dataset.year.slice(0, 7))}</span><span role="cell">${flap(s.dataset.name.slice(0, innerWidth <= 760 ? 13 : 22))}</span><span class="gate" role="cell">${flap(s.dataset.code)}</span><span class="st${live ? ' live' : ''}" role="cell">${flap(s.dataset.status)}</span>`;
+    b.addEventListener('click', () => { const r = s.getBoundingClientRect(); scrollTo({ top: r.top + scrollY - innerHeight / 2 + r.height / 2, behavior: reduce ? 'auto' : 'smooth' }); });
+    boardRows.appendChild(b);
+  });
+  if (!reduce) {
+    const CH = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const bo = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return; bo.disconnect();
+      $$('.flap i', boardRows).forEach((el, i) => {
+        const fin = el.dataset.c; if (fin === '&nbsp;') return;
+        let n = 6 + (i % 9);
+        const tick = () => { if (n-- <= 0) { el.innerHTML = fin; return; } el.textContent = CH[(Math.random() * CH.length) | 0]; setTimeout(tick, 45); };
+        setTimeout(tick, (i % 30) * 12);
+      });
+    }, { threshold: 0.3 });
+    bo.observe($('.board'));
+  }
+
+  /* ====================================================================
+     FLIGHT ROUTE (plane follows the path while scrolling)
+     ==================================================================== */
+  const route = $('#route'), rsvg = $('#routeSvg'), base = $('#routeBase'), flown = $('#routeFlown'), plane = $('#routePlane');
+  let samples = [], total = 0, planeL = 0;
+  function buildRoute() {
+    const rr = route.getBoundingClientRect(), top = rr.top + scrollY, W = rr.width, mobile = innerWidth <= 760;
+    rsvg.setAttribute('viewBox', `0 0 ${W} ${route.offsetHeight}`);
+    const pts = [[mobile ? 26 : W / 2, 0]];
+    const items = $$('.leg, .stop, .arrival', route);
+    items.forEach((el, i) => {
+      const r = el.getBoundingClientRect(), y = r.top + scrollY - top + r.height / 2;
+      if (mobile) { pts.push([26 + (i % 2 ? 6 : -6), el.classList.contains('arrival') ? r.top + scrollY - top + 10 : y]); return; }
+      if (el.classList.contains('stop')) {
+        const leftCard = r.left - rr.left < W * 0.2;
+        pts.push([leftCard ? W * 0.78 : W * 0.22, y]);
+      } else if (el.classList.contains('arrival')) pts.push([W / 2, r.top + scrollY - top - 34]);
+      else pts.push([W / 2, y]);
+    });
+    // catmull-rom → cubic bezier
+    let d = `M${pts[0][0]},${pts[0][1]}`;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+      const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6], c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+      d += ` C${c1[0].toFixed(1)},${c1[1].toFixed(1)} ${c2[0].toFixed(1)},${c2[1].toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)}`;
+    }
+    base.setAttribute('d', d); flown.setAttribute('d', d);
+    total = flown.getTotalLength();
+    flown.style.strokeDasharray = `${total} ${total}`;
+    samples = [];
+    for (let l = 0; l <= total; l += 6) { const p = flown.getPointAtLength(l); samples.push([l, p.y]); }
+  }
+  function lengthAtY(y) {
+    let lo = 0, hi = samples.length - 1;
+    if (!samples.length) return 0;
+    while (lo < hi) { const m = (lo + hi) >> 1; if (samples[m][1] < y) lo = m + 1; else hi = m; }
+    return samples[lo][0];
+  }
+  function stepRoute() {
+    if (!total) return;
+    const rr = route.getBoundingClientRect();
+    const targetY = innerHeight * 0.52 - rr.top;
+    const L = targetY <= 0 ? 0 : lengthAtY(targetY);
+    planeL += (L - planeL) * (reduce ? 1 : 0.14);
+    const p = flown.getPointAtLength(planeL), q = flown.getPointAtLength(Math.min(total, planeL + 4));
+    const ang = Math.atan2(q.y - p.y, q.x - p.x) * 180 / Math.PI + 90;
+    plane.style.transform = `translate(${p.x}px, ${p.y}px) rotate(${ang}deg)`;
+    plane.style.opacity = planeL > 2 ? 1 : 0;
+    flown.style.strokeDashoffset = total - planeL;
+    for (const s of stops) {
+      const top = s.offsetTop, h = s.offsetHeight;
+      s.classList.toggle('arrived', p.y >= top + h * 0.3);
+    }
+  }
+  const nearObs = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && e.target.classList.add('near')), { rootMargin: '0px 0px -12% 0px' });
+  stops.forEach((s) => nearObs.observe(s));
+  const rebuild = () => { buildRoute(); stepRoute(); };
+  addEventListener('resize', rebuild);
+  addEventListener('load', rebuild);
+  if (document.fonts) document.fonts.ready.then(rebuild);
+  new ResizeObserver(rebuild).observe(route);
+  rebuild();
+
+  /* hero HUD flicker */
+  const alt = $('#hudAlt'), gs = $('#hudGs');
+
+  /* ====================================================================
+     MAIN LOOP
+     ==================================================================== */
+  let prev = performance.now(), frameN = 0;
+  function loop(t) {
+    const dt = Math.min(0.05, (t - prev) / 1000); prev = t; frameN++;
+    drawSky(t);
+    if (heroVisible) drawEarth(t);
+    if (globeVisible) { stepGlobe(dt); drawGlobe(t); }
+    stepRoute();
+    if (heroVisible && frameN % 30 === 0 && !reduce) { alt.textContent = (35000 + Math.round(Math.sin(t / 3000) * 40)).toLocaleString() + ' ft'; gs.textContent = 512 + Math.round(Math.sin(t / 2100) * 3) + ' kt'; }
+    requestAnimationFrame(loop);
   }
   requestAnimationFrame(loop);
-  if (reduce) { // draw static frames once per view change
-    const redraw = () => requestAnimationFrame(loop);
-    $$('[data-goto], #prgList button').forEach((b) => b.addEventListener('click', redraw));
-  }
-
-  /* ---------------- init ---------------- */
-  selectPrg(0); selectLog(0);
-  const initial = location.hash.slice(1);
-  go(VIEWS.includes(initial) ? initial : 'home', false);
-  addEventListener('hashchange', () => go(location.hash.slice(1), false));
 })();

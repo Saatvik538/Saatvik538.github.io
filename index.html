@@ -3,388 +3,424 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Saatvik Kesarwani · SK-01 Teach Pendant</title>
-<meta name="description" content="Saatvik Kesarwani: Electrical & Computer Engineering at UT Austin, Robotics Honors. Robot arms, drone swarms, LiDAR and published medical ML.">
-<meta property="og:title" content="Saatvik Kesarwani">
-<meta property="og:description" content="ECE @ UT Austin · Robotics Honors. Robot arms, drone swarms, LiDAR and published medical ML.">
+<title>Saatvik Kesarwani · Flight SK-26</title>
+<meta name="description" content="Saatvik Kesarwani: Electrical & Computer Engineering at UT Austin, Robotics Honors. I love to build and explore: robot arms, drone swarms, LiDAR, published medical ML, and 14 countries so far.">
+<meta property="og:title" content="Saatvik Kesarwani · Flight SK-26">
+<meta property="og:description" content="I love to build and explore. ECE @ UT Austin · Robotics Honors.">
 <meta property="og:image" content="assets/photos/headshot.jpg">
-<meta name="theme-color" content="#16181a">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23f5c400'/%3E%3Crect x='9' y='9' width='46' height='46' rx='6' fill='%23a9b89a'/%3E%3Ctext x='32' y='42' font-family='monospace' font-size='22' font-weight='700' fill='%2318221a' text-anchor='middle'%3ESK%3C/text%3E%3C/svg%3E">
-<link rel="preload" href="assets/fonts/vt323-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="assets/fonts/barlow-condensed-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<meta name="theme-color" content="#03050c">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%2303050c'/%3E%3Cpath fill='%2389e6ff' d='M50 8c4 4 5 12 5 20v14l34 20v7L55 58v18l10 8v5l-15-4-15 4v-5l10-8V58L11 69v-7l34-20V28c0-8 1-16 5-20z'/%3E%3C/svg%3E">
+<link rel="preload" href="assets/fonts/syne-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<a class="skip" href="#screen">Skip to content</a>
+<a class="skip" href="#main">Skip to content</a>
 
-<div class="cell" aria-hidden="true"></div>
+<canvas id="sky" aria-hidden="true"></canvas>
 
-<div class="pendant" id="pendant">
+<header class="nav">
+  <a class="brand" href="#top" aria-label="Back to top">
+    <svg viewBox="0 0 100 100" aria-hidden="true"><use href="#plane"/></svg>
+    <span>SK-26</span>
+  </a>
+  <nav aria-label="Primary">
+    <a href="#flight">Itinerary</a>
+    <a href="#map">Globe</a>
+    <a href="#about">Passenger</a>
+    <a class="nav-cta" href="mailto:saatvikkesarwani@gmail.com">Contact</a>
+  </nav>
+</header>
 
-  <!-- ===== top bar ===== -->
-  <header class="topbar">
-    <div class="brandplate">
-      <b>SK-01</b><span>TEACH PENDANT</span>
-    </div>
-    <div class="leds" aria-hidden="true">
-      <span class="led on" data-led="pwr"><i></i>PWR</span>
-      <span class="led on" data-led="servo"><i></i>SERVO</span>
-      <span class="led" data-led="run"><i></i>RUN</span>
-      <span class="led" data-led="fault"><i></i>FAULT</span>
-    </div>
-    <div class="keyswitch" aria-hidden="true">
-      <span>T1</span><span class="key"><i></i></span><span>AUTO</span>
-    </div>
-    <button class="estop" id="estop" aria-pressed="false" aria-label="Emergency stop: pauses all animation">
-      <span class="estop-ring"><span class="estop-cap">STOP</span></span>
-    </button>
-  </header>
+<!-- shared plane symbol -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="hull" x1="0" x2="1">
+      <stop offset="0" stop-color="#9fb3cc"/><stop offset=".45" stop-color="#ffffff"/><stop offset=".55" stop-color="#eef4ff"/><stop offset="1" stop-color="#8ea3bd"/>
+    </linearGradient>
+    <linearGradient id="wing" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e9f0fb"/><stop offset="1" stop-color="#7f92ab"/>
+    </linearGradient>
+    <symbol id="plane" viewBox="0 0 100 100">
+      <path fill="url(#wing)" d="M45 37 L5 59 L5 65 L45 54 Z M55 37 L95 59 L95 65 L55 54 Z"/>
+      <path fill="url(#wing)" d="M46.5 80 L33 89 L33 93 L48 89 Z M53.5 80 L67 89 L67 93 L52 89 Z"/>
+      <rect x="23" y="50" width="6" height="11" rx="2.5" fill="#5d6f88"/>
+      <rect x="71" y="50" width="6" height="11" rx="2.5" fill="#5d6f88"/>
+      <path fill="url(#hull)" d="M50 3 C54.5 7 55.5 15 55.5 25 L55.5 72 C55.5 82 53 90 50 97 C47 90 44.5 82 44.5 72 L44.5 25 C44.5 15 45.5 7 50 3 Z"/>
+      <path fill="#1b2a44" d="M47.2 13 C48 10 52 10 52.8 13 L52.6 16 L47.4 16 Z"/>
+      <circle cx="5.5" cy="62" r="1.6" fill="#ff4d5e"/><circle cx="94.5" cy="62" r="1.6" fill="#48ff9b"/>
+    </symbol>
+  </defs>
+</svg>
 
-  <div class="body">
-    <!-- ===== LCD ===== -->
-    <section class="lcd" id="screen" aria-live="polite">
-      <div class="lcd-head">
-        <span id="hdTab">HOME</span>
-        <span class="hd-mid"><span id="hdState">IDLE</span> · T1 100%</span>
-        <span id="hdClock">--:--</span>
-      </div>
+<main id="main">
 
-      <div class="lcd-body">
-
-        <!-- boot -->
-        <div class="boot" id="boot" aria-hidden="true">
-          <pre id="bootLog"></pre>
-          <p class="boot-skip">PRESS ANY KEY</p>
-        </div>
-
-        <!-- HOME -->
-        <div class="view" id="v-home" data-view="home">
-          <div class="home">
-            <div class="home-copy">
-              <p class="dim">OPERATOR</p>
-              <h1>SAATVIK<br>KESARWANI</h1>
-              <p class="lead">Electrical &amp; Computer Engineering at UT Austin, Robotics Honors. I build machines that sense, think, and move: robot arms, drone swarms, LiDAR scanners and medical ML.</p>
-              <ul class="status">
-                <li><span>NOW</span>Embedded SWE Intern @ Nesteye</li>
-                <li><span>NOW</span>Drone swarm sw @ Texas Aerial Robotics</li>
-                <li><span>PREV</span>AI/ML Research @ Dartmouth Hitchcock</li>
-              </ul>
-              <p class="prompt">&gt; PRESS <button class="inline-key" data-goto="prg">F1</button> TO LOAD PROGRAMS<span class="cursor">_</span></p>
-            </div>
-            <figure class="home-fig">
-              <canvas class="anim" data-anim="home" width="220" height="180"></canvas>
-              <figcaption>J1 <b id="j1">0.0</b>° · J2 <b id="j2">0.0</b>° · TCP <b id="tcp">0,0</b></figcaption>
-            </figure>
-          </div>
-        </div>
-
-        <!-- PROGRAMS -->
-        <div class="view" id="v-prg" data-view="prg" hidden>
-          <div class="split">
-            <ol class="list" id="prgList" aria-label="Programs">
-              <li><button data-i="0"><span>PRG01</span>ACOUSTIC_TB</button></li>
-              <li><button data-i="1"><span>PRG02</span>ROBOT_ARM</button></li>
-              <li><button data-i="2"><span>PRG03</span>OMNIGLASSES</button></li>
-              <li><button data-i="3"><span>PRG04</span>GAITWAY</button></li>
-              <li><button data-i="4"><span>PRG05</span>FTC_15167</button></li>
-              <li><button data-i="5"><span>PRG06</span>SKADVISING</button></li>
-            </ol>
-
-            <div class="detail" id="prgDetail">
-              <article class="prg" data-i="0" data-anim="acoustic">
-                <header><h2>AcousticTB</h2><p class="dim">2024–2026 · Published · sole author</p></header>
-                <p>A handheld tuberculosis screener that listens to a cough. I designed a 3-sensor Arduino device (MAX9814 mic amp, ultrasonic ranging, camera), 3D-printed the enclosure, and ran a CNN + XGBoost ensemble trained on noise-augmented audio.</p>
-                <div class="grid2">
-                  <ol class="tp">
-                    <li>CALL MIC_AMP_CAPTURE ;</li>
-                    <li>CALL ULTRASONIC_RANGE ;</li>
-                    <li>CALL NOISE_AUGMENT ;</li>
-                    <li>CALL CNN_XGB_ENSEMBLE ;</li>
-                    <li>R[1:AUC]=0.85 ;</li>
-                    <li>IF R[1]&gt;WHO_SPEC, JMP LBL[PUBLISH] ;</li>
-                    <li>LBL[PUBLISH] ;</li>
-                  </ol>
-                  <canvas class="anim" width="200" height="120"></canvas>
-                </div>
-                <dl class="regs"><div><dt>R[1] AUC-ROC</dt><dd>0.85</dd></div><div><dt>R[2] HACKATHONS</dt><dd>TOP 3 ×2</dd></div><div><dt>R[3] PAPER</dt><dd>IEEE TechRxiv</dd></div></dl>
-                <p class="inc">INCLUDES: Python · TensorFlow · Keras · XGBoost · Arduino C++ · 3D printing</p>
-                <p class="links"><a href="https://www.techrxiv.org/doi/pdf/10.36227/techrxiv.175742700.07240558/v1" target="_blank" rel="noopener">[ READ PAPER ]</a> <a href="https://github.com/Saatvik538/AcousticTB" target="_blank" rel="noopener">[ SOURCE ]</a></p>
-              </article>
-
-              <article class="prg" data-i="1" data-anim="arm" hidden>
-                <header><h2>Language-Controlled Robot Arm</h2><p class="dim">2025–2026</p></header>
-                <p>Control a real 4-axis Rotrics DexArm in plain English, like "deal the cards." Gemini turns commands into grab, lift and drop steps, depth sensing plus CV shape/color detection solves spherical coordinates, and a physics-sim twin vets every motion before the real arm moves.</p>
-                <div class="grid2">
-                  <ol class="tp">
-                    <li>CALL PARSE_CMD(GEMINI) ;</li>
-                    <li>CALL DETECT_OBJ(DEPTH+CV) ;</li>
-                    <li>CALL SOLVE_SPHERICAL ;</li>
-                    <li>CALL SIM_TWIN_CHECK ;</li>
-                    <li>IF UNSAFE, JMP LBL[REJECT] ;</li>
-                    <li>J P[1] 100% FINE ;</li>
-                    <li>L P[2] 500mm/sec CNT0 ;</li>
-                  </ol>
-                  <canvas class="anim" width="200" height="120"></canvas>
-                </div>
-                <dl class="regs"><div><dt>R[1] REACH ACC</dt><dd>95%</dd></div><div><dt>R[2] PICK &amp; PLACE</dt><dd>88% / 50</dd></div><div><dt>R[3] UNSAFE BLOCKED</dt><dd>100%</dd></div></dl>
-                <p class="inc">INCLUDES: Python · Gemini API · OpenCV · Flask · Three.js · physics simulation</p>
-              </article>
-
-              <article class="prg" data-i="2" data-anim="glasses" hidden>
-                <header><h2>OmniGlasses</h2><p class="dim">2026</p></header>
-                <p>Glasses with eyes in the back of your head. Three ESP32 cameras stream to a phone over a custom UDP protocol that rebuilds frames, an FPGA turns collision events into instant spoken warnings, and a Flutter app tracks eye strain.</p>
-                <div class="grid2">
-                  <ol class="tp">
-                    <li>CALL ESP32_CAM_X3 ;</li>
-                    <li>CALL UDP_FRAME_REBUILD ;</li>
-                    <li>CALL FPGA_COLLISION ;</li>
-                    <li>IF REAR_OBJ, CALL SPEAK_WARN ;</li>
-                    <li>CALL EYE_STATE_CLF ;</li>
-                    <li>CALL YOLO_SCREENS ;</li>
-                  </ol>
-                  <canvas class="anim" width="200" height="120"></canvas>
-                </div>
-                <dl class="regs"><div><dt>R[1] REAR DETECT</dt><dd>~95%</dd></div><div><dt>R[2] BLINK/SQUINT</dt><dd>98%</dd></div><div><dt>R[3] CAMERAS</dt><dd>3 LIVE</dd></div></dl>
-                <p class="inc">INCLUDES: ESP32-CAM · FPGA · UDP · YOLO · OpenCV · Flutter</p>
-              </article>
-
-              <article class="prg" data-i="3" data-anim="gait" hidden>
-                <header><h2>GaitWay</h2><p class="dim">2026 · 1st place</p></header>
-                <p>Turns an iPhone's LiDAR into a clinical gait lab that measures joint angles, stride velocity and postural sway on-device. Clinicians get measurements, never video. Replaces $5.5K–22K/yr gait rigs.</p>
-                <div class="grid2">
-                  <ol class="tp">
-                    <li>CALL LIDAR_SKELETON ;</li>
-                    <li>CALL JOINT_ANGLES ;</li>
-                    <li>CALL STRIDE_VELOCITY ;</li>
-                    <li>CALL SWAY_ESTIMATE ;</li>
-                    <li>CALL COREML_CLASSIFY ;</li>
-                    <li>CALL PUSH_METRICS(NO_VIDEO) ;</li>
-                  </ol>
-                  <canvas class="anim" width="200" height="120"></canvas>
-                </div>
-                <dl class="regs"><div><dt>R[1] RESULT</dt><dd>1ST PLACE</dd></div><div><dt>R[2] TESTED LIVE</dt><dd>100+</dd></div><div><dt>R[3] VIDEO SHARED</dt><dd>0 FRAMES</dd></div></dl>
-                <p class="inc">INCLUDES: Swift · ARKit LiDAR · Core ML · Supabase</p>
-                <p class="links"><a href="https://github.com/Saatvik538/gaitway" target="_blank" rel="noopener">[ SOURCE ]</a></p>
-              </article>
-
-              <article class="prg" data-i="4" data-anim="ftc" hidden>
-                <header><h2>FTC 15167 Robo Troopers</h2><p class="dim">2022–2025 · FIRST Worlds</p></header>
-                <p>Led CAD, the build and the autonomous code. As alliance captain we won the 2025 Chesapeake State Championship and went to the FIRST World Championship.</p>
-                <div class="grid2">
-                  <ol class="tp">
-                    <li>CALL CAD(ONSHAPE) ;</li>
-                    <li>CALL BUILD_DRIVETRAIN ;</li>
-                    <li>CALL AUTO_PATH ;</li>
-                    <li>WAIT R[STATE]=CHAMPION ;</li>
-                    <li>JMP LBL[WORLDS] ;</li>
-                  </ol>
-                  <canvas class="anim" width="200" height="120"></canvas>
-                </div>
-                <dl class="regs"><div><dt>R[1] 2025</dt><dd>WORLDS</dd></div><div><dt>R[2] STATE</dt><dd>CHAMPIONS</dd></div><div><dt>R[3] AWARDS</dt><dd>CONTROL·INSPIRE·DESIGN</dd></div></dl>
-                <p class="inc">INCLUDES: Java · Onshape · Fusion 360 · Inventor · autonomous pathing</p>
-              </article>
-
-              <article class="prg" data-i="5" data-anim="web" hidden>
-                <header><h2>skadvising.org</h2><p class="dim">2026</p></header>
-                <p>I designed, built, deployed and host the site for my tutoring business, and it brought in 100+ client inquiries in its first four months.</p>
-                <div class="grid2">
-                  <ol class="tp">
-                    <li>CALL DESIGN ;</li>
-                    <li>CALL BUILD(REACT+TS) ;</li>
-                    <li>CALL DEPLOY ;</li>
-                    <li>R[1:INQUIRIES]=100+ ;</li>
-                  </ol>
-                  <canvas class="anim" width="200" height="120"></canvas>
-                </div>
-                <dl class="regs"><div><dt>R[1] INQUIRIES</dt><dd>100+</dd></div><div><dt>R[2] TIME</dt><dd>4 MONTHS</dd></div></dl>
-                <p class="inc">INCLUDES: React · TypeScript · Vite · TanStack Start</p>
-                <p class="links"><a href="https://www.skadvising.org/" target="_blank" rel="noopener">[ VISIT SITE ]</a></p>
-              </article>
-
-              <div class="runbar" aria-hidden="true">
-                <span id="runMsg">SELECT A PROGRAM · PRESS RUN</span>
-                <span class="bar"><i id="runFill"></i></span>
-                <button class="mini-run" data-act="run">RUN ▶</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- EVENT LOG / EXPERIENCE -->
-        <div class="view" id="v-log" data-view="log" hidden>
-          <div class="split">
-            <ol class="list" id="logList" aria-label="Experience">
-              <li><button data-i="0"><span>2026-09</span>NESTEYE</button></li>
-              <li><button data-i="1"><span>2026-10</span>TEXAS_AERIAL</button></li>
-              <li><button data-i="2"><span>2025-05</span>DARTMOUTH</button></li>
-              <li><button data-i="3"><span>2025-07</span>OBSCURITY</button></li>
-              <li><button data-i="4"><span>2024-06</span>ORANGEWOOD</button></li>
-            </ol>
-            <div class="detail">
-              <article class="ev" data-i="0">
-                <header><h2><a href="https://nesteye.ai/" target="_blank" rel="noopener">Nesteye</a></h2><p class="dim">Embedded Software Engineering Intern · Sep 2026–now · Austin, TX</p></header>
-                <img class="shot" src="assets/photos/nesteye.jpg" alt="Nesteye" loading="lazy" onerror="this.remove()">
-                <p class="dim">$10M-valued AgTech startup</p>
-                <ul class="ev-list">
-                  <li>Built an offline-first iOS LiDAR app that captured 500+ 3D poultry models at a &gt;90% autonomous success rate.</li>
-                  <li>Kept scans of moving birds accurate with ARKit motion gating that rejects frames with &gt;100 mm motion residual.</li>
-                  <li>Validated LiDAR captures against NVIDIA Omniverse simulations before deployment on farms.</li>
-                </ul>
-                <p class="inc">Swift · ARKit · LiDAR · NVIDIA Omniverse</p>
-              </article>
-              <article class="ev" data-i="1" hidden>
-                <header><h2>Texas Aerial Robotics</h2><p class="dim">Hardware &amp; Software Team Member · Oct 2026–now · Austin, TX</p></header>
-                <img class="shot" src="assets/photos/texas-aerial-robotics.jpg" alt="Texas Aerial Robotics" loading="lazy" onerror="this.remove()">
-                <p class="dim">IARC drone swarm team</p>
-                <ul class="ev-list">
-                  <li>Built a ROS-compatible Unity (C#) minefield simulator for zero-risk pre-flight testing of a 4-drone swarm.</li>
-                  <li>Built a shared mine map for 4 drones by fusing AprilTag detections and pymavlink pose data in SQLite with 1 ft clearance.</li>
-                  <li>Enabling hands-free control of each drone by relaying phone voice commands (start, pause, land) over TCP.</li>
-                </ul>
-                <p class="inc">ROS · Unity / C# · pymavlink · AprilTag · SQLite</p>
-              </article>
-              <article class="ev" data-i="2" hidden>
-                <header><h2><a href="https://edit-ai-program.github.io/edit-ai-internship/people/HS_Saatvik_Kesarwani-2026/" target="_blank" rel="noopener">Dartmouth Hitchcock Medical Center</a></h2><p class="dim">AI/ML Research Intern → Research Mentor · May 2025–Aug 2026 · Remote</p></header>
-                <img class="shot" src="assets/photos/dartmouth.jpg" alt="Dartmouth Hitchcock EDIT AI" loading="lazy" onerror="this.remove()">
-                <p class="dim">EDIT AI Program</p>
-                <ul class="ev-list">
-                  <li>Predicted survival for 397 colorectal cancer patients by fusing slide images, RNA-seq, methylation and spatial data.</li>
-                  <li>Ranked survival correctly for 72% of patient pairs (0.717 C-index) via gated attention fusion and a TextGrad LLM loss.</li>
-                  <li>Promoted to mentor 10 of 90 interns across 13 ML projects; presented at EDIT; 30-page paper selected for publication.</li>
-                </ul>
-                <p class="inc">PyTorch · multimodal ML · genomics · LLMs</p>
-              </article>
-              <article class="ev" data-i="3" hidden>
-                <header><h2>Obscurity Labs</h2><p class="dim">Software Engineering Intern · Jul–Aug 2025 · Hybrid</p></header>
-                <img class="shot" src="assets/photos/obscurity-labs.jpg" alt="Obscurity Labs" loading="lazy" onerror="this.remove()">
-                <p class="dim">Cybersecurity</p>
-                <ul class="ev-list">
-                  <li>Cut bandwidth and backend storage by 80% with a Go log-deduplication agent; added 5+ real-time threat alerts.</li>
-                  <li>Shipped 5+ UI features in 5 weeks on the TypeScript front end of an endpoint detection and response platform.</li>
-                  <li>Added multi-time-zone support to security event timelines; demoed releases to the C-suite.</li>
-                </ul>
-                <p class="inc">Go · TypeScript · EDR</p>
-              </article>
-              <article class="ev" data-i="4" hidden>
-                <header><h2>Orangewood Labs</h2><p class="dim">Forward-Deployed Engineering Intern · Jun–Aug 2024 · Remote</p></header>
-                <img class="shot" src="assets/photos/orangewood.jpg" alt="Orangewood Labs" loading="lazy" onerror="this.remove()">
-                <p class="dim">YC-backed robotics startup</p>
-                <ul class="ev-list">
-                  <li>Secured 10 product demos and pilot negotiations by mapping robot-arm use cases across 500+ factories and schools.</li>
-                </ul>
-                <p class="inc">Robot arms · customer discovery</p>
-              </article>
-            </div>
-          </div>
-        </div>
-
-        <!-- INFO / ABOUT -->
-        <div class="view" id="v-info" data-view="info" hidden>
-          <div class="info">
-            <figure class="dither" id="dither" tabindex="0" aria-label="Headshot. Hover or tap to switch the backlight on.">
-              <canvas id="ditherCanvas" width="150" height="188"></canvas>
-              <img src="assets/photos/headshot.jpg" alt="Saatvik Kesarwani" id="headshot">
-              <figcaption>HOVER / TAP: BACKLIGHT ON</figcaption>
-            </figure>
-            <div class="info-copy">
-              <h2>OPERATOR PROFILE</h2>
-              <dl class="kv">
-                <div><dt>NAME</dt><dd>Saatvik Kesarwani</dd></div>
-                <div><dt>SCHOOL</dt><dd>The University of Texas at Austin</dd></div>
-                <div><dt>MAJOR</dt><dd>Electrical &amp; Computer Engineering, Robotics minor</dd></div>
-                <div><dt>PROGRAM</dt><dd>Robotics Honors</dd></div>
-                <div><dt>PREV</dt><dd>Thomas Jefferson HS for Science &amp; Technology</dd></div>
-                <div><dt>CLUBS</dt><dd>IEEE UT · ML &amp; Data Science · Texas Momentum · Texas Accelerate</dd></div>
-              </dl>
-              <p>I came up through FIRST robotics and the Computer Systems Lab at TJ. I like problems where the code has to touch the real world, where a bug means a drone drifts or a sensor lies.</p>
-              <h3>CERTIFICATIONS</h3>
-              <ul class="certs">
-                <li><a href="https://asterhacks-2025.devpost.com/project-gallery" target="_blank" rel="noopener"><b>1/188</b> Grand Prize, AsterHacks</a></li>
-                <li><a href="https://hackvortex-codestorm-5.devpost.com/project-gallery" target="_blank" rel="noopener"><b>3/828</b> HackVortex</a></li>
-                <li><a href="https://hacktj.org/museum#year-2025" target="_blank" rel="noopener"><b>BEST</b> Biomedical, HackTJ</a></li>
-                <li><span><b>WORLDS</b> FTC State Champions</span></li>
-                <li><span><b>NMS</b> National Merit Scholar</span></li>
-              </ul>
-              <h3>INSTALLED OPTIONS</h3>
-              <dl class="kv opts">
-                <div><dt>LANG</dt><dd>Python, C, C++, C#, Go, Java, TypeScript, Swift, SQL, CUDA</dd></div>
-                <div><dt>ROBOT/HW</dt><dd>ROS, Arduino, ESP32, FPGA, I2C/UART, PCB design, oscilloscope</dd></div>
-                <div><dt>ML/VISION</dt><dd>PyTorch, TensorFlow, scikit-learn, OpenCV, YOLO, Core ML</dd></div>
-                <div><dt>SW/CAD</dt><dd>FastAPI, React, PostgreSQL, Docker, Linux · Onshape, Fusion 360</dd></div>
-              </dl>
-            </div>
-          </div>
-        </div>
-
-        <!-- COMM / CONTACT -->
-        <div class="view" id="v-comm" data-view="comm" hidden>
-          <div class="comm">
-            <h2>COMM PORT OPEN</h2>
-            <p class="dim">Open to internships &amp; research. Response time: fast.</p>
-            <ul class="comm-list">
-              <li><span>MAIL</span><a href="mailto:saatvikkesarwani@gmail.com">saatvikkesarwani@gmail.com</a></li>
-              <li><span>GITHUB</span><a href="https://github.com/Saatvik538" target="_blank" rel="noopener">github.com/Saatvik538</a></li>
-              <li><span>LINKEDIN</span><a href="https://www.linkedin.com/in/saatvikk/" target="_blank" rel="noopener">linkedin.com/in/saatvikk</a></li>
-              <li><span>DEVPOST</span><a href="https://devpost.com/Saatvik538" target="_blank" rel="noopener">devpost.com/Saatvik538</a></li>
-              <li><span>RESUME</span><a href="assets/Saatvik_Kesarwani_Resume.pdf" target="_blank" rel="noopener">Saatvik_Kesarwani_Resume.pdf</a></li>
-            </ul>
-            <p class="prompt"><a class="send" href="mailto:saatvikkesarwani@gmail.com">&gt; SEND MESSAGE</a><span class="cursor">_</span></p>
-          </div>
-        </div>
-
-        <!-- E-STOP overlay -->
-        <div class="alarm" id="alarm" hidden>
-          <p class="alarm-code">SRVO-001</p>
-          <p class="alarm-title">OPERATOR PANEL E-STOP</p>
-          <p>All motion halted. Release the red button to reset.</p>
-        </div>
-      </div>
-
-      <!-- on-screen soft-key labels -->
-      <nav class="softkeys" aria-label="Sections">
-        <a href="#prg" data-goto="prg">PRG</a>
-        <a href="#log" data-goto="log">LOG</a>
-        <a href="#info" data-goto="info">INFO</a>
-        <a href="#comm" data-goto="comm">COMM</a>
-        <a href="#home" data-goto="home">HOME</a>
-      </nav>
-    </section>
-
-    <!-- ===== hardware controls ===== -->
-    <aside class="controls" aria-label="Pendant controls">
-      <div class="jog">
-        <p class="plate">SELECT</p>
-        <div class="dpad">
-          <button class="key up" data-act="up" aria-label="Previous item">▲</button>
-          <button class="key left" data-act="left" aria-label="Previous screen">◀</button>
-          <button class="key enter" data-act="enter" aria-label="Enter">ENT</button>
-          <button class="key right" data-act="right" aria-label="Next screen">▶</button>
-          <button class="key down" data-act="down" aria-label="Next item">▼</button>
-        </div>
-      </div>
-      <div class="exec">
-        <p class="plate">EXECUTE</p>
-        <button class="key wide run" data-act="run">RUN</button>
-        <button class="key wide" data-act="step">STEP</button>
-        <button class="key wide" data-act="hold">HOLD</button>
-      </div>
-      <div class="speaker" aria-hidden="true"></div>
-      <p class="serial" aria-hidden="true">S/N SK-01 · AUSTIN TX</p>
-    </aside>
+<!-- ================= HERO ================= -->
+<section class="hero" id="top">
+  <div class="hero-top">
+    <p class="kicker"><span class="dot"></span>Flight SK-26 · Departing Austin, TX</p>
+    <h1 class="name"><span>Saatvik</span> <span>Kesarwani</span></h1>
+    <p class="tag">I love to <em>build</em> and <em>explore</em>.</p>
+    <p class="sub">Electrical &amp; Computer Engineering at UT Austin, Robotics Honors. Now based in Austin, Texas for school.</p>
+    <div class="hero-ctas">
+    <a class="btn" href="#flight">Board the flight <i>↓</i></a>
+    <button class="btn ghost" id="openGlobe" type="button">See where I've been <i>◍</i></button>
   </div>
 
-  <!-- ===== F-keys ===== -->
-  <nav class="fkeys" aria-label="Function keys">
-    <button class="fkey" data-goto="prg"><b>F1</b>PRG</button>
-    <button class="fkey" data-goto="log"><b>F2</b>LOG</button>
-    <button class="fkey" data-goto="info"><b>F3</b>INFO</button>
-    <button class="fkey" data-goto="comm"><b>F4</b>COMM</button>
-    <button class="fkey" data-goto="home"><b>F5</b>HOME</button>
-  </nav>
-</div>
+  </div>
 
-<p class="hint" aria-hidden="true">KEYS: 1–5 SCREENS · ↑↓ SELECT · ENTER RUN · ESC E-STOP</p>
+  <div class="hero-plane" aria-hidden="true">
+    <div class="contrail"></div>
+    <svg class="plane-svg" viewBox="0 0 100 100"><use href="#plane"/></svg>
+  </div>
 
+  <div class="hud" aria-hidden="true">
+    <div><span>ALT</span><b id="hudAlt">35,000 ft</b></div>
+    <div><span>GS</span><b id="hudGs">512 kt</b></div>
+    <div><span>NEXT</span><b>ATB · AcousticTB</b></div>
+  </div>
+
+  <button class="earth-hit" id="earthHit" type="button" aria-label="Open the travel globe"><span>Tap the Earth to see where I've traveled</span></button>
+  <canvas id="earth" aria-hidden="true"></canvas>
+</section>
+
+<!-- ================= ITINERARY ================= -->
+<section class="flight" id="flight">
+  <div class="wrap">
+    <p class="kicker">Itinerary</p>
+    <h2 class="h2">Every stop is something I built.</h2>
+    <p class="lede">The plane flies the route as you scroll: six builds, then five places I've worked. Click a row on the board to jump straight there.</p>
+
+    <div class="board" role="table" aria-label="Departures board">
+      <div class="board-head" role="row">
+        <span role="columnheader">Year</span><span role="columnheader">Destination</span><span role="columnheader">Gate</span><span role="columnheader">Status</span>
+      </div>
+      <div id="boardRows"></div>
+    </div>
+  </div>
+
+  <div class="route" id="route">
+    <svg class="route-svg" id="routeSvg" aria-hidden="true">
+      <defs>
+        <linearGradient id="flown" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#89e6ff"/><stop offset="1" stop-color="#ffb35c"/>
+        </linearGradient>
+      </defs>
+      <path id="routeBase" class="route-base"/>
+      <path id="routeFlown" class="route-flown"/>
+    </svg>
+    <div class="route-plane" id="routePlane" aria-hidden="true"><svg viewBox="0 0 100 100"><use href="#plane"/></svg></div>
+
+    <div class="leg"><span>Leg 01</span><b>Builds</b></div>
+
+    <article class="stop" id="s-atb" data-code="ATB" data-year="2024–26" data-name="AcousticTB" data-status="Landed">
+      <div class="pass">
+        <div class="pass-main">
+          <div class="pass-top"><span class="code">ATB</span><span class="meta">Published · sole author</span></div>
+          <h3>AcousticTB</h3>
+          <p>A handheld tuberculosis screener that listens to a cough. I designed a 3-sensor Arduino device (MAX9814 mic amp, ultrasonic ranging, camera), 3D-printed the enclosure, and ran a CNN + XGBoost ensemble on noise-augmented audio.</p>
+          <ul class="chips"><li>Python</li><li>TensorFlow</li><li>XGBoost</li><li>Arduino C++</li><li>3D printing</li></ul>
+          <p class="links"><a href="https://www.techrxiv.org/doi/pdf/10.36227/techrxiv.175742700.07240558/v1" target="_blank" rel="noopener">Read the paper ↗</a><a href="https://github.com/Saatvik538/AcousticTB" target="_blank" rel="noopener">Code ↗</a></p>
+        </div>
+        <div class="pass-stub">
+          <div><span>AUC-ROC</span><b>0.85</b></div>
+          <div><span>Hackathons</span><b>Top 3 ×2</b></div>
+          <div><span>Year</span><b>2024–26</b></div>
+          <div class="barcode" aria-hidden="true"></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="stop" id="s-arm" data-code="ARM" data-year="2025–26" data-name="Robot Arm" data-status="Landed">
+      <div class="pass">
+        <div class="pass-main">
+          <div class="pass-top"><span class="code">ARM</span><span class="meta">Robotics · LLMs</span></div>
+          <h3>Language-Controlled Robot Arm</h3>
+          <p>Control a real 4-axis Rotrics DexArm in plain English, like "deal the cards." Gemini turns commands into grab, lift and drop steps, depth sensing plus CV solves spherical coordinates, and a physics twin vets every motion before the arm moves.</p>
+          <ul class="chips"><li>Python</li><li>Gemini API</li><li>OpenCV</li><li>Flask</li><li>Three.js</li></ul>
+        </div>
+        <div class="pass-stub">
+          <div><span>Reach accuracy</span><b>95%</b></div>
+          <div><span>Pick &amp; place</span><b>88% / 50</b></div>
+          <div><span>Unsafe blocked</span><b>100%</b></div>
+          <div class="barcode" aria-hidden="true"></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="stop" id="s-omn" data-code="OMN" data-year="2026" data-name="OmniGlasses" data-status="Landed">
+      <div class="pass">
+        <div class="pass-main">
+          <div class="pass-top"><span class="code">OMN</span><span class="meta">Wearables · embedded</span></div>
+          <h3>OmniGlasses</h3>
+          <p>Glasses with eyes in the back of your head. Three ESP32 cameras stream to a phone over a custom UDP protocol, an FPGA turns collision events into spoken warnings, and a Flutter app tracks eye strain.</p>
+          <ul class="chips"><li>ESP32-CAM</li><li>FPGA</li><li>UDP</li><li>YOLO</li><li>Flutter</li></ul>
+        </div>
+        <div class="pass-stub">
+          <div><span>Rear objects</span><b>~95%</b></div>
+          <div><span>Blink/squint</span><b>98%</b></div>
+          <div><span>Live cams</span><b>3</b></div>
+          <div class="barcode" aria-hidden="true"></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="stop" id="s-gwy" data-code="GWY" data-year="2026" data-name="GaitWay" data-status="Landed">
+      <div class="pass">
+        <div class="pass-main">
+          <div class="pass-top"><span class="code">GWY</span><span class="meta">1st place · health</span></div>
+          <h3>GaitWay</h3>
+          <p>Turns an iPhone's LiDAR into a clinical gait lab that measures joint angles, stride velocity and postural sway on-device. Clinicians get measurements, never video. Replaces $5.5K–22K/yr rigs.</p>
+          <ul class="chips"><li>Swift</li><li>ARKit LiDAR</li><li>Core ML</li><li>Supabase</li></ul>
+          <p class="links"><a href="https://github.com/Saatvik538/gaitway" target="_blank" rel="noopener">Code ↗</a></p>
+        </div>
+        <div class="pass-stub">
+          <div><span>Result</span><b>1st</b></div>
+          <div><span>Tested live</span><b>100+</b></div>
+          <div><span>Video shared</span><b>0</b></div>
+          <div class="barcode" aria-hidden="true"></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="stop" id="s-ftc" data-code="FTC" data-year="2022–25" data-name="FTC Robo Troopers" data-status="Landed">
+      <div class="pass">
+        <div class="pass-main">
+          <div class="pass-top"><span class="code">FTC</span><span class="meta">Team 15167 · Robo Troopers</span></div>
+          <h3>FIRST Tech Challenge</h3>
+          <p>Led CAD, the build and the autonomous code. As alliance captain we won the 2025 Chesapeake State Championship and went to the FIRST World Championship.</p>
+          <ul class="chips"><li>Java</li><li>Onshape</li><li>Fusion 360</li><li>Autonomous</li></ul>
+        </div>
+        <div class="pass-stub">
+          <div><span>2025</span><b>Worlds</b></div>
+          <div><span>State</span><b>Champs</b></div>
+          <div><span>Awards</span><b>3</b></div>
+          <div class="barcode" aria-hidden="true"></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="stop" id="s-ska" data-code="SKA" data-year="2026" data-name="skadvising.org" data-status="Landed">
+      <div class="pass">
+        <div class="pass-main">
+          <div class="pass-top"><span class="code">SKA</span><span class="meta">Web · my tutoring business</span></div>
+          <h3>skadvising.org</h3>
+          <p>Designed, built, deployed and hosted the site for my tutoring business. It brought in 100+ client inquiries in its first four months.</p>
+          <ul class="chips"><li>React</li><li>TypeScript</li><li>Vite</li><li>TanStack</li></ul>
+          <p class="links"><a href="https://www.skadvising.org/" target="_blank" rel="noopener">Visit site ↗</a></p>
+        </div>
+        <div class="pass-stub">
+          <div><span>Inquiries</span><b>100+</b></div>
+          <div><span>In</span><b>4 mo</b></div>
+          <div><span>Year</span><b>2026</b></div>
+          <div class="barcode" aria-hidden="true"></div>
+        </div>
+      </div>
+    </article>
+
+    <div class="leg"><span>Leg 02</span><b>Experience</b></div>
+
+    <article class="stop exp" id="s-nst" data-code="NST" data-year="2026" data-name="Nesteye" data-status="In flight">
+      <div class="pass">
+        <div class="pass-main">
+          <div class="pass-top"><span class="code">NST</span><span class="meta">Sep 2026 – now · Austin, TX</span></div>
+          <h3><a href="https://nesteye.ai/" target="_blank" rel="noopener">Nesteye</a></h3>
+          <p class="role">Embedded Software Engineering Intern · $10M-valued AgTech startup</p>
+          <img class="shot" src="assets/photos/nesteye.jpg" alt="Nesteye" loading="lazy" onerror="this.remove()">
+          <ul class="bul">
+            <li>Built an offline-first iOS LiDAR app that captured 500+ 3D poultry models at a &gt;90% autonomous success rate.</li>
+            <li>Kept scans of moving birds accurate with ARKit motion gating that rejects frames with &gt;100 mm motion residual.</li>
+            <li>Validated LiDAR captures against NVIDIA Omniverse simulations before deploying on farms.</li>
+          </ul>
+        </div>
+        <div class="pass-stub">
+          <div><span>3D scans</span><b>500+</b></div>
+          <div><span>Autonomous</span><b>&gt;90%</b></div>
+          <div><span>Status</span><b class="live">In flight</b></div>
+          <div class="barcode" aria-hidden="true"></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="stop exp" id="s-tar" data-code="TAR" data-year="2026" data-name="Texas Aerial Robotics" data-status="In flight">
+      <div class="pass">
+        <div class="pass-main">
+          <div class="pass-top"><span class="code">TAR</span><span class="meta">Oct 2026 – now · Austin, TX</span></div>
+          <h3>Texas Aerial Robotics</h3>
+          <p class="role">Hardware &amp; Software Team Member · IARC drone swarm</p>
+          <img class="shot" src="assets/photos/texas-aerial-robotics.jpg" alt="Texas Aerial Robotics" loading="lazy" onerror="this.remove()">
+          <ul class="bul">
+            <li>Built a ROS-compatible Unity (C#) minefield simulator for zero-risk pre-flight testing of a 4-drone swarm.</li>
+            <li>Built a shared mine map for 4 drones by fusing AprilTag detections and pymavlink pose data in SQLite with 1 ft clearance.</li>
+            <li>Enabling hands-free control of each drone by relaying phone voice commands (start, pause, land) over TCP.</li>
+          </ul>
+        </div>
+        <div class="pass-stub">
+          <div><span>Drones</span><b>4</b></div>
+          <div><span>Clearance</span><b>1 ft</b></div>
+          <div><span>Status</span><b class="live">In flight</b></div>
+          <div class="barcode" aria-hidden="true"></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="stop exp" id="s-dhm" data-code="DHM" data-year="2025–26" data-name="Dartmouth Hitchcock" data-status="Landed">
+      <div class="pass">
+        <div class="pass-main">
+          <div class="pass-top"><span class="code">DHM</span><span class="meta">May 2025 – Aug 2026 · Remote</span></div>
+          <h3><a href="https://edit-ai-program.github.io/edit-ai-internship/people/HS_Saatvik_Kesarwani-2026/" target="_blank" rel="noopener">Dartmouth Hitchcock Medical Center</a></h3>
+          <p class="role">AI/ML Research Intern → Research Mentor · EDIT AI Program</p>
+          <img class="shot" src="assets/photos/dartmouth.jpg" alt="Dartmouth Hitchcock EDIT AI" loading="lazy" onerror="this.remove()">
+          <ul class="bul">
+            <li>Predicted survival for 397 colorectal cancer patients by fusing slide images, RNA-seq, methylation and spatial data.</li>
+            <li>Ranked survival correctly for 72% of patient pairs (0.717 C-index) via gated attention fusion and a TextGrad LLM loss.</li>
+            <li>Promoted to mentor 10 of 90 interns across 13 ML projects; 30-page paper selected for publication.</li>
+          </ul>
+        </div>
+        <div class="pass-stub">
+          <div><span>Patients</span><b>397</b></div>
+          <div><span>C-index</span><b>0.717</b></div>
+          <div><span>Mentored</span><b>10</b></div>
+          <div class="barcode" aria-hidden="true"></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="stop exp" id="s-obs" data-code="OBS" data-year="2025" data-name="Obscurity Labs" data-status="Landed">
+      <div class="pass">
+        <div class="pass-main">
+          <div class="pass-top"><span class="code">OBS</span><span class="meta">Jul – Aug 2025 · Hybrid</span></div>
+          <h3>Obscurity Labs</h3>
+          <p class="role">Software Engineering Intern · Cybersecurity</p>
+          <img class="shot" src="assets/photos/obscurity-labs.jpg" alt="Obscurity Labs" loading="lazy" onerror="this.remove()">
+          <ul class="bul">
+            <li>Cut bandwidth and backend storage by 80% with a Go log-deduplication agent; added 5+ real-time threat alerts.</li>
+            <li>Shipped 5+ UI features in 5 weeks on the TypeScript front end of an endpoint detection and response platform.</li>
+            <li>Added multi-time-zone support to security event timelines; demoed releases to the C-suite.</li>
+          </ul>
+        </div>
+        <div class="pass-stub">
+          <div><span>Storage cut</span><b>80%</b></div>
+          <div><span>Features</span><b>5+</b></div>
+          <div><span>Weeks</span><b>5</b></div>
+          <div class="barcode" aria-hidden="true"></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="stop exp" id="s-owl" data-code="OWL" data-year="2024" data-name="Orangewood Labs" data-status="Landed">
+      <div class="pass">
+        <div class="pass-main">
+          <div class="pass-top"><span class="code">OWL</span><span class="meta">Jun – Aug 2024 · Remote</span></div>
+          <h3>Orangewood Labs</h3>
+          <p class="role">Forward-Deployed Engineering Intern · YC-backed robot arms</p>
+          <img class="shot" src="assets/photos/orangewood.jpg" alt="Orangewood Labs" loading="lazy" onerror="this.remove()">
+          <ul class="bul">
+            <li>Secured 10 product demos and pilot negotiations by mapping robot-arm use cases across 500+ factories and schools.</li>
+          </ul>
+        </div>
+        <div class="pass-stub">
+          <div><span>Demos</span><b>10</b></div>
+          <div><span>Sites mapped</span><b>500+</b></div>
+          <div><span>Year</span><b>2024</b></div>
+          <div class="barcode" aria-hidden="true"></div>
+        </div>
+      </div>
+    </article>
+
+    <div class="arrival" id="arrival">
+      <span class="kicker">Final approach</span>
+      <b>Now landing in Austin, Texas</b>
+      <p>Studying ECE at UT Austin and building with Nesteye and Texas Aerial Robotics.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= GLOBE ================= -->
+<section class="globe-sec" id="map">
+  <div class="wrap globe-grid">
+    <div class="globe-copy">
+      <p class="kicker">Passport</p>
+      <h2 class="h2">Where I've explored.</h2>
+      <p class="lede">Drag the globe. Every glowing arc leaves from Austin, where I'm based now for school.</p>
+      <div class="stats">
+        <div><b id="statCountries">14</b><span>countries</span></div>
+        <div><b id="statStates">21</b><span>U.S. states</span></div>
+        <div><b>5</b><span>territories &amp; islands</span></div>
+      </div>
+      <div class="legend">
+        <span><i class="lg-home"></i>Home base · Austin</span>
+        <span><i class="lg-been"></i>Been there</span>
+        <span><i class="lg-next"></i>Next on the list</span>
+      </div>
+      <div class="stamps" id="stamps"></div>
+    </div>
+    <div class="globe-box">
+      <canvas id="globe" aria-label="Interactive globe of places Saatvik has traveled" role="img"></canvas>
+      <div class="globe-tip" id="globeTip" hidden></div>
+      <div class="globe-hint">Drag to spin · Tap a pin</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ABOUT ================= -->
+<section class="about" id="about">
+  <div class="wrap">
+    <p class="kicker">Passenger</p>
+    <div class="ticket">
+      <div class="ticket-photo"><img src="assets/photos/headshot.jpg" alt="Saatvik Kesarwani" loading="lazy" width="1000" height="1000"></div>
+      <div class="ticket-body">
+        <div class="ticket-row top">
+          <div><span>Passenger</span><b>Saatvik Kesarwani</b></div>
+          <div><span>From</span><b>AUS · Austin, TX</b></div>
+          <div><span>Class</span><b>Robotics Honors</b></div>
+        </div>
+        <p class="bio">I love to build and explore. I came up through FIRST robotics and the Computer Systems Lab at Thomas Jefferson High School for Science and Technology, and now study Electrical &amp; Computer Engineering with a robotics minor at UT Austin. I like problems where the code has to touch the real world, and trips that end somewhere new.</p>
+        <div class="ticket-row">
+          <div><span>School</span><b>The University of Texas at Austin</b></div>
+          <div><span>Major</span><b>ECE · Robotics minor</b></div>
+          <div><span>Clubs</span><b>IEEE UT · ML &amp; DS · Texas Momentum · Texas Accelerate</b></div>
+        </div>
+        <h3>Miles earned</h3>
+        <ul class="miles">
+          <li><a href="https://asterhacks-2025.devpost.com/project-gallery" target="_blank" rel="noopener"><b>1/188</b>Grand Prize, AsterHacks</a></li>
+          <li><a href="https://hackvortex-codestorm-5.devpost.com/project-gallery" target="_blank" rel="noopener"><b>3/828</b>HackVortex</a></li>
+          <li><a href="https://hacktj.org/museum#year-2025" target="_blank" rel="noopener"><b>Best</b>Biomedical, HackTJ</a></li>
+          <li><span><b>Worlds</b>FTC State Champions</span></li>
+          <li><span><b>NMS</b>National Merit Scholar</span></li>
+        </ul>
+        <h3>Carry-on</h3>
+        <dl class="carry">
+          <div><dt>Languages</dt><dd>Python, C, C++, C#, Go, Java, TypeScript, Swift, SQL, CUDA</dd></div>
+          <div><dt>Robotics &amp; HW</dt><dd>ROS, Arduino, ESP32, FPGA, I2C/UART, PCB design, oscilloscope</dd></div>
+          <div><dt>ML &amp; Vision</dt><dd>PyTorch, TensorFlow, scikit-learn, OpenCV, YOLO, Core ML</dd></div>
+          <div><dt>Software &amp; CAD</dt><dd>FastAPI, React, PostgreSQL, Docker, Linux, Onshape, Fusion 360</dd></div>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section class="contact" id="contact">
+  <div class="wrap">
+    <p class="kicker"><span class="dot"></span>Now boarding</p>
+    <h2 class="big">Where should we go next?</h2>
+    <a class="mail" href="mailto:saatvikkesarwani@gmail.com">saatvikkesarwani@gmail.com</a>
+    <ul class="socials">
+      <li><a href="https://github.com/Saatvik538" target="_blank" rel="noopener">GitHub</a></li>
+      <li><a href="https://www.linkedin.com/in/saatvikk/" target="_blank" rel="noopener">LinkedIn</a></li>
+      <li><a href="https://devpost.com/Saatvik538" target="_blank" rel="noopener">Devpost</a></li>
+      <li><a href="assets/Saatvik_Kesarwani_Resume.pdf" target="_blank" rel="noopener">Résumé</a></li>
+    </ul>
+    <footer><span>© 2026 Saatvik Kesarwani</span><span>Flight SK-26 · Austin, TX</span></footer>
+  </div>
+</section>
+
+</main>
+
+<script src="assets/vendor/d3-array.min.js" defer></script>
+<script src="assets/vendor/d3-geo.min.js" defer></script>
+<script src="assets/vendor/topojson-client.min.js" defer></script>
 <script src="app.js" defer></script>
 </body>
 </html>
