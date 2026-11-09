@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Saatvik Kesarwani · Flight SK-26</title>
-<meta name="description" content="Saatvik Kesarwani: Electrical & Computer Engineering at UT Austin, Robotics Honors. I love to build and explore: robot arms, drone swarms, LiDAR, published medical ML, and 14 countries so far.">
-<meta property="og:title" content="Saatvik Kesarwani · Flight SK-26">
-<meta property="og:description" content="I love to build and explore. ECE @ UT Austin · Robotics Honors.">
+<title>Saatvik Kesarwani · ECE @ UT Austin</title>
+<meta name="description" content="Saatvik Kesarwani: Electrical & Computer Engineering at UT Austin, Robotics Honors. Robot arms, drone swarms, LiDAR, embedded systems and published medical ML.">
+<meta property="og:title" content="Saatvik Kesarwani">
+<meta property="og:description" content="Electrical & Computer Engineering @ UT Austin · Robotics Honors.">
 <meta property="og:image" content="assets/photos/headshot.jpg">
 <meta name="theme-color" content="#03050c">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%2303050c'/%3E%3Cpath fill='%2389e6ff' d='M50 8c4 4 5 12 5 20v14l34 20v7L55 58v18l10 8v5l-15-4-15 4v-5l10-8V58L11 69v-7l34-20V28c0-8 1-16 5-20z'/%3E%3C/svg%3E">
@@ -21,12 +21,12 @@
 <header class="nav">
   <a class="brand" href="#top" aria-label="Back to top">
     <svg viewBox="0 0 100 100" aria-hidden="true"><use href="#plane"/></svg>
-    <span>SK-26</span>
+    <span>Saatvik Kesarwani</span>
   </a>
   <nav aria-label="Primary">
-    <a href="#flight">Itinerary</a>
-    <a href="#map">Globe</a>
-    <a href="#about">Passenger</a>
+    <a href="#flight">Experience</a>
+    <a href="#map">Travel</a>
+    <a href="#about">About</a>
     <a class="nav-cta" href="mailto:saatvikkesarwani@gmail.com">Contact</a>
   </nav>
 </header>
@@ -57,13 +57,12 @@
 <!-- ================= HERO ================= -->
 <section class="hero" id="top">
   <div class="hero-top">
-    <p class="kicker"><span class="dot"></span>Flight SK-26 · Departing Austin, TX</p>
+    <p class="kicker"><span class="dot"></span>Based in Austin, Texas</p>
     <h1 class="name"><span>Saatvik</span> <span>Kesarwani</span></h1>
-    <p class="tag">I love to <em>build</em> and <em>explore</em>.</p>
-    <p class="sub">Electrical &amp; Computer Engineering at UT Austin, Robotics Honors. Now based in Austin, Texas for school.</p>
+    <p class="sub">Electrical &amp; Computer Engineering at The University of Texas at Austin · Robotics Honors Program</p>
     <div class="hero-ctas">
-    <a class="btn" href="#flight">Board the flight <i>↓</i></a>
-    <button class="btn ghost" id="openGlobe" type="button">See where I've been <i>◍</i></button>
+    <a class="btn" href="#flight">View my work <i>↓</i></a>
+    <button class="btn ghost" id="openGlobe" type="button">Where I've traveled <i>◍</i></button>
   </div>
 
   </div>
@@ -73,26 +72,21 @@
     <svg class="plane-svg" viewBox="0 0 100 100"><use href="#plane"/></svg>
   </div>
 
-  <div class="hud" aria-hidden="true">
-    <div><span>ALT</span><b id="hudAlt">35,000 ft</b></div>
-    <div><span>GS</span><b id="hudGs">512 kt</b></div>
-    <div><span>NEXT</span><b>FTC · Robo Troopers</b></div>
-  </div>
 
-  <button class="earth-hit" id="earthHit" type="button" aria-label="Open the travel globe"><span>Tap the Earth to see where I've traveled</span></button>
+  <button class="earth-hit" id="earthHit" type="button" aria-label="Open the travel globe"><span>Click the Earth to see where I've traveled</span></button>
   <canvas id="earth" aria-hidden="true"></canvas>
 </section>
 
 <!-- ================= ITINERARY ================= -->
 <section class="flight" id="flight">
   <div class="wrap">
-    <p class="kicker">Itinerary</p>
-    <h2 class="h2">Every stop is something I built.</h2>
-    <p class="lede">Everything in order, oldest first. Click any row to jump to it, or just scroll and the plane flies the route: six builds, then five places I've worked.</p>
+    <p class="kicker">Experience &amp; Projects</p>
+    <h2 class="h2">What I've built and where I've worked.</h2>
+    <p class="lede">Listed in chronological order. Select a row to jump to it, or scroll through the projects and roles below.</p>
 
-    <div class="board" role="table" aria-label="Departures board">
+    <div class="board" role="table" aria-label="Timeline of projects and experience">
       <div class="board-head" role="row">
-        <span role="columnheader">Departed</span><span role="columnheader">Flight</span><span role="columnheader">Destination</span><span role="columnheader">Type</span><span role="columnheader">Status</span>
+        <span role="columnheader">Dates</span><span role="columnheader"></span><span role="columnheader">Project / Role</span><span role="columnheader">Type</span>
       </div>
       <div id="boardRows"></div>
     </div>
@@ -110,9 +104,9 @@
     </svg>
     <div class="route-plane" id="routePlane" aria-hidden="true"><svg viewBox="0 0 100 100"><use href="#plane"/></svg></div>
 
-    <div class="leg"><span>Leg 01</span><b>Builds</b></div>
+    <div class="leg"><span>01</span><b>Projects</b></div>
 
-    <article class="stop" id="s-ftc" data-code="FTC" data-year="2022–25" data-name="FTC Robo Troopers" data-status="Landed">
+    <article class="stop" id="s-ftc" data-code="FTC" data-year="2022–25" data-name="FTC Robo Troopers">
       <div class="pass">
         <div class="viz"><canvas data-viz="ftc" aria-hidden="true"></canvas></div>
         <div class="pass-main">
@@ -130,7 +124,7 @@
       </div>
     </article>
 
-    <article class="stop" id="s-atb" data-code="ATB" data-year="2024–26" data-name="AcousticTB" data-status="Landed">
+    <article class="stop" id="s-atb" data-code="ATB" data-year="2024–26" data-name="AcousticTB">
       <div class="pass">
         <div class="viz"><canvas data-viz="atb" aria-hidden="true"></canvas></div>
         <div class="pass-main">
@@ -149,7 +143,7 @@
       </div>
     </article>
 
-    <article class="stop" id="s-arm" data-code="ARM" data-year="2025–26" data-name="Robot Arm" data-status="Landed">
+    <article class="stop" id="s-arm" data-code="ARM" data-year="2025–26" data-name="Robot Arm">
       <div class="pass">
         <div class="viz"><canvas data-viz="arm" aria-hidden="true"></canvas></div>
         <div class="pass-main">
@@ -167,7 +161,7 @@
       </div>
     </article>
 
-    <article class="stop" id="s-gwy" data-code="GWY" data-year="2026" data-name="GaitWay" data-status="Landed">
+    <article class="stop" id="s-gwy" data-code="GWY" data-year="2026" data-name="GaitWay">
       <div class="pass">
         <div class="viz"><canvas data-viz="gwy" aria-hidden="true"></canvas></div>
         <div class="pass-main">
@@ -186,7 +180,7 @@
       </div>
     </article>
 
-    <article class="stop" id="s-omn" data-code="OMN" data-year="2026" data-name="OmniGlasses" data-status="Landed">
+    <article class="stop" id="s-omn" data-code="OMN" data-year="2026" data-name="OmniGlasses">
       <div class="pass">
         <div class="viz"><canvas data-viz="omn" aria-hidden="true"></canvas></div>
         <div class="pass-main">
@@ -204,7 +198,7 @@
       </div>
     </article>
 
-    <article class="stop" id="s-ska" data-code="SKA" data-year="2026" data-name="skadvising.org" data-status="Landed">
+    <article class="stop" id="s-ska" data-code="SKA" data-year="2026" data-name="skadvising.org">
       <div class="pass">
         <div class="viz"><canvas data-viz="ska" aria-hidden="true"></canvas></div>
         <div class="pass-main">
@@ -223,9 +217,9 @@
       </div>
     </article>
 
-    <div class="leg"><span>Leg 02</span><b>Experience</b></div>
+    <div class="leg"><span>02</span><b>Experience</b></div>
 
-    <article class="stop exp" id="s-owl" data-code="OWL" data-year="2024" data-name="Orangewood Labs" data-status="Landed">
+    <article class="stop exp" id="s-owl" data-code="OWL" data-year="2024" data-name="Orangewood Labs">
       <div class="pass">
         <div class="pass-main">
           <div class="pass-top"><span class="code">OWL</span><span class="meta">Jun – Aug 2024 · Remote</span></div>
@@ -240,12 +234,11 @@
           <div><span>Demos</span><b>10</b></div>
           <div><span>Sites mapped</span><b>500+</b></div>
           <div><span>Year</span><b>2024</b></div>
-          <div class="barcode" aria-hidden="true"></div>
         </div>
       </div>
     </article>
 
-    <article class="stop exp" id="s-dhm" data-code="DHM" data-year="2025–26" data-name="Dartmouth Hitchcock" data-status="Landed">
+    <article class="stop exp" id="s-dhm" data-code="DHM" data-year="2025–26" data-name="Dartmouth Hitchcock">
       <div class="pass">
         <div class="pass-main">
           <div class="pass-top"><span class="code">DHM</span><span class="meta">May 2025 – Aug 2026 · Remote</span></div>
@@ -262,12 +255,11 @@
           <div><span>Patients</span><b>397</b></div>
           <div><span>C-index</span><b>0.717</b></div>
           <div><span>Mentored</span><b>10</b></div>
-          <div class="barcode" aria-hidden="true"></div>
         </div>
       </div>
     </article>
 
-    <article class="stop exp" id="s-obs" data-code="OBS" data-year="2025" data-name="Obscurity Labs" data-status="Landed">
+    <article class="stop exp" id="s-obs" data-code="OBS" data-year="2025" data-name="Obscurity Labs">
       <div class="pass">
         <div class="pass-main">
           <div class="pass-top"><span class="code">OBS</span><span class="meta">Jul – Aug 2025 · Hybrid</span></div>
@@ -284,15 +276,14 @@
           <div><span>Storage cut</span><b>80%</b></div>
           <div><span>Features</span><b>5+</b></div>
           <div><span>Weeks</span><b>5</b></div>
-          <div class="barcode" aria-hidden="true"></div>
         </div>
       </div>
     </article>
 
-    <article class="stop exp" id="s-nst" data-code="NST" data-year="2026" data-name="Nesteye" data-status="In flight">
+    <article class="stop exp" id="s-nst" data-code="NST" data-year="2026" data-name="Nesteye">
       <div class="pass">
         <div class="pass-main">
-          <div class="pass-top"><span class="code">NST</span><span class="meta">Sep 2026 – now · Austin, TX</span></div>
+          <div class="pass-top"><span class="code">NST</span><span class="meta">Sep 2026 – Present · Austin, TX</span></div>
           <h3><a href="https://nesteye.ai/" target="_blank" rel="noopener">Nesteye</a></h3>
           <p class="role">Embedded Software Engineering Intern · $10M-valued AgTech startup</p>
           <img class="shot" src="assets/photos/nesteye.jpg" alt="Nesteye" loading="lazy" onerror="this.remove()">
@@ -305,16 +296,15 @@
         <div class="pass-stub">
           <div><span>3D scans</span><b>500+</b></div>
           <div><span>Autonomous</span><b>&gt;90%</b></div>
-          <div><span>Status</span><b class="live">In flight</b></div>
-          <div class="barcode" aria-hidden="true"></div>
+          <div><span>Dates</span><b class="live">Present</b></div>
         </div>
       </div>
     </article>
 
-    <article class="stop exp" id="s-tar" data-code="TAR" data-year="2026" data-name="Texas Aerial Robotics" data-status="In flight">
+    <article class="stop exp" id="s-tar" data-code="TAR" data-year="2026" data-name="Texas Aerial Robotics">
       <div class="pass">
         <div class="pass-main">
-          <div class="pass-top"><span class="code">TAR</span><span class="meta">Oct 2026 – now · Austin, TX</span></div>
+          <div class="pass-top"><span class="code">TAR</span><span class="meta">Sep 2026 – Present · Austin, TX</span></div>
           <h3>Texas Aerial Robotics</h3>
           <p class="role">Hardware &amp; Software Team Member · IARC drone swarm</p>
           <img class="shot" src="assets/photos/texas-aerial-robotics.jpg" alt="Texas Aerial Robotics" loading="lazy" onerror="this.remove()">
@@ -327,16 +317,15 @@
         <div class="pass-stub">
           <div><span>Drones</span><b>4</b></div>
           <div><span>Clearance</span><b>1 ft</b></div>
-          <div><span>Status</span><b class="live">In flight</b></div>
-          <div class="barcode" aria-hidden="true"></div>
+          <div><span>Dates</span><b class="live">Present</b></div>
         </div>
       </div>
     </article>
 
     <div class="arrival" id="arrival">
-      <span class="kicker">Final approach</span>
-      <b>Now landing in Austin, Texas</b>
-      <p>Studying ECE at UT Austin and building with Nesteye and Texas Aerial Robotics.</p>
+      <span class="kicker">Currently</span>
+      <b>Austin, Texas</b>
+      <p>Studying Electrical &amp; Computer Engineering at UT Austin, working at Nesteye and on Texas Aerial Robotics.</p>
     </div>
   </div>
 </section>
@@ -345,7 +334,7 @@
 <section class="globe-sec" id="map">
   <div class="wrap globe-grid">
     <div class="globe-copy">
-      <p class="kicker">Passport</p>
+      <p class="kicker">Travel</p>
       <h2 class="h2">Where I've explored.</h2>
       <p class="lede">Drag the globe. Every glowing arc leaves from Austin, where I'm based now for school.</p>
       <div class="stats">
@@ -371,22 +360,22 @@
 <!-- ================= ABOUT ================= -->
 <section class="about" id="about">
   <div class="wrap">
-    <p class="kicker">Passenger</p>
+    <p class="kicker">About</p>
     <div class="ticket">
       <div class="ticket-photo"><img src="assets/photos/headshot.jpg" alt="Saatvik Kesarwani" loading="lazy" width="1000" height="1000"></div>
       <div class="ticket-body">
         <div class="ticket-row top">
-          <div><span>Passenger</span><b>Saatvik Kesarwani</b></div>
-          <div><span>From</span><b>AUS · Austin, TX</b></div>
-          <div><span>Class</span><b>Robotics Honors</b></div>
+          <div><span>Name</span><b>Saatvik Kesarwani</b></div>
+          <div><span>Location</span><b>Austin, TX</b></div>
+          <div><span>Program</span><b>Robotics Honors</b></div>
         </div>
-        <p class="bio">I love to build and explore. I came up through FIRST robotics and the Computer Systems Lab at Thomas Jefferson High School for Science and Technology, and now study Electrical &amp; Computer Engineering with a robotics minor at UT Austin. I like problems where the code has to touch the real world, and trips that end somewhere new.</p>
+        <p class="bio">I love to build and explore. I came up through FIRST robotics and the Computer Systems Lab at Thomas Jefferson High School for Science and Technology, and now study Electrical &amp; Computer Engineering with a robotics minor at UT Austin. I like problems where the code has to touch the real world.</p>
         <div class="ticket-row">
           <div><span>School</span><b>The University of Texas at Austin</b></div>
           <div><span>Major</span><b>ECE · Robotics minor</b></div>
           <div><span>Clubs</span><b>IEEE UT · ML &amp; DS · Texas Momentum · Texas Accelerate</b></div>
         </div>
-        <h3>Miles earned</h3>
+        <h3>Honors</h3>
         <ul class="miles">
           <li><a href="https://asterhacks-2025.devpost.com/project-gallery" target="_blank" rel="noopener"><b>1/188</b>Grand Prize, AsterHacks</a></li>
           <li><a href="https://hackvortex-codestorm-5.devpost.com/project-gallery" target="_blank" rel="noopener"><b>3/828</b>HackVortex</a></li>
@@ -394,7 +383,7 @@
           <li><span><b>Worlds</b>FTC State Champions</span></li>
           <li><span><b>NMS</b>National Merit Scholar</span></li>
         </ul>
-        <h3>Carry-on</h3>
+        <h3>Skills</h3>
         <dl class="carry">
           <div><dt>Languages</dt><dd>Python, C, C++, C#, Go, Java, TypeScript, Swift, SQL, CUDA</dd></div>
           <div><dt>Robotics &amp; HW</dt><dd>ROS, Arduino, ESP32, FPGA, I2C/UART, PCB design, oscilloscope</dd></div>
@@ -409,8 +398,8 @@
 <!-- ================= CONTACT ================= -->
 <section class="contact" id="contact">
   <div class="wrap">
-    <p class="kicker"><span class="dot"></span>Now boarding</p>
-    <h2 class="big">Where should we go next?</h2>
+    <p class="kicker"><span class="dot"></span>Contact</p>
+    <h2 class="big">Let's work together.</h2>
     <a class="mail" href="mailto:saatvikkesarwani@gmail.com">saatvikkesarwani@gmail.com</a>
     <ul class="socials">
       <li><a href="https://github.com/Saatvik538" target="_blank" rel="noopener">GitHub</a></li>
@@ -418,7 +407,7 @@
       <li><a href="https://devpost.com/Saatvik538" target="_blank" rel="noopener">Devpost</a></li>
       <li><a href="assets/Saatvik_Kesarwani_Resume.pdf" target="_blank" rel="noopener">Résumé</a></li>
     </ul>
-    <footer><span>© 2026 Saatvik Kesarwani</span><span>Flight SK-26 · Austin, TX</span></footer>
+    <footer><span>© 2026 Saatvik Kesarwani</span><span>Austin, Texas</span></footer>
   </div>
 </section>
 

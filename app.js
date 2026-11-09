@@ -383,32 +383,30 @@
   const boardRows = $('#boardRows');
   // Chronological (oldest first). `sort` is a decimal year used only for ordering.
   const BOARD = [
-    { id: 's-ftc', sort: 2022.0, date: '2022', code: 'FTC', name: 'FTC Robo Troopers', what: 'Robot CAD, build & autonomous → Worlds', type: 'Build', status: 'Landed' },
-    { id: 's-owl', sort: 2024.45, date: 'Jun 2024', code: 'OWL', name: 'Orangewood Labs', what: 'Forward-deployed engineering intern', type: 'Work', status: 'Landed' },
-    { id: 's-atb', sort: 2024.5, date: '2024', code: 'ATB', name: 'AcousticTB', what: 'TB screening from a cough · published', type: 'Build', status: 'Landed' },
-    { id: 's-arm', sort: 2025.0, date: '2025', code: 'ARM', name: 'Language-Controlled Robot Arm', what: 'Plain-English commands → safe arm motion', type: 'Build', status: 'Landed' },
-    { id: 's-dhm', sort: 2025.37, date: 'May 2025', code: 'DHM', name: 'Dartmouth Hitchcock', what: 'AI/ML research intern → mentor', type: 'Work', status: 'Landed' },
-    { id: 's-obs', sort: 2025.5, date: 'Jul 2025', code: 'OBS', name: 'Obscurity Labs', what: 'Software engineering intern', type: 'Work', status: 'Landed' },
-    { id: 's-gwy', sort: 2026.1, date: '2026', code: 'GWY', name: 'GaitWay', what: 'iPhone LiDAR gait lab · 1st place', type: 'Build', status: 'Landed' },
-    { id: 's-omn', sort: 2026.2, date: '2026', code: 'OMN', name: 'OmniGlasses', what: 'Smart glasses that see behind you', type: 'Build', status: 'Landed' },
-    { id: 's-ska', sort: 2026.3, date: '2026', code: 'SKA', name: 'skadvising.org', what: 'Tutoring business website', type: 'Build', status: 'Landed' },
-    { id: 's-nst', sort: 2026.67, date: 'Sep 2026', code: 'NST', name: 'Nesteye', what: 'Embedded software engineering intern', type: 'Work', status: 'In flight' },
-    { id: 's-tar', sort: 2026.75, date: 'Oct 2026', code: 'TAR', name: 'Texas Aerial Robotics', what: 'Drone swarm hardware & software', type: 'Work', status: 'In flight' },
+    { id: 's-ftc', sort: 2022.0, year: '2022', dates: '2022 – 2025', code: 'FTC', name: 'FTC Robo Troopers', what: 'Robot CAD, build & autonomous code', type: 'Project' },
+    { id: 's-owl', sort: 2024.45, year: '2024', dates: 'Jun – Aug 2024', code: 'OWL', name: 'Orangewood Labs', what: 'Forward-Deployed Engineering Intern', type: 'Experience' },
+    { id: 's-atb', sort: 2024.5, year: '2024', dates: '2024 – 2026', code: 'ATB', name: 'AcousticTB', what: 'TB screening from cough audio · published', type: 'Project' },
+    { id: 's-arm', sort: 2025.0, year: '2025', dates: '2025 – 2026', code: 'ARM', name: 'Language-Controlled Robot Arm', what: 'Natural-language control of a 4-axis arm', type: 'Project' },
+    { id: 's-dhm', sort: 2025.37, year: '2025', dates: 'May 2025 – Aug 2026', code: 'DHM', name: 'Dartmouth Hitchcock Medical Center', what: 'AI/ML Research Intern → Research Mentor', type: 'Experience' },
+    { id: 's-obs', sort: 2025.5, year: '2025', dates: 'Jul – Aug 2025', code: 'OBS', name: 'Obscurity Labs', what: 'Software Engineering Intern', type: 'Experience' },
+    { id: 's-gwy', sort: 2026.1, year: '2026', dates: '2026', code: 'GWY', name: 'GaitWay', what: 'iPhone LiDAR gait analysis · 1st place', type: 'Project' },
+    { id: 's-omn', sort: 2026.2, year: '2026', dates: '2026', code: 'OMN', name: 'OmniGlasses', what: 'Smart glasses with rear-view detection', type: 'Project' },
+    { id: 's-ska', sort: 2026.3, year: '2026', dates: '2026', code: 'SKA', name: 'skadvising.org', what: 'Tutoring business website', type: 'Project' },
+    { id: 's-nst', sort: 2026.67, year: '2026', dates: 'Sep 2026 – Present', code: 'NST', name: 'Nesteye', what: 'Embedded Software Engineering Intern', type: 'Experience' },
+    { id: 's-tar', sort: 2026.68, year: '2026', dates: 'Sep 2026 – Present', code: 'TAR', name: 'Texas Aerial Robotics', what: 'Hardware & Software Team Member', type: 'Experience' },
   ].sort((a, b) => a.sort - b.sort);
   let lastYear = null;
   BOARD.forEach((r, i) => {
-    const yr = r.date.slice(-4);
-    if (yr !== lastYear) {
-      const y = document.createElement('div'); y.className = 'board-year'; y.textContent = yr; boardRows.appendChild(y); lastYear = yr;
+    if (r.year !== lastYear) {
+      const y = document.createElement('div'); y.className = 'board-year'; y.textContent = r.year; boardRows.appendChild(y); lastYear = r.year;
     }
-    const live = r.status === 'In flight';
+    const now = /Present/.test(r.dates);
     const b = document.createElement('button'); b.className = 'board-row'; b.type = 'button'; b.setAttribute('role', 'row');
     b.style.setProperty('--i', i);
-    b.innerHTML = `<span class="b-date" role="cell">${r.date}</span>`
+    b.innerHTML = `<span class="b-date${now ? ' now' : ''}" role="cell">${r.dates}</span>`
       + `<span class="b-code" role="cell">${r.code}</span>`
       + `<span class="b-dest" role="cell"><b>${r.name}</b><small>${r.what}</small></span>`
-      + `<span class="b-type ${r.type.toLowerCase()}" role="cell">${r.type}</span>`
-      + `<span class="b-st${live ? ' live' : ''}" role="cell"><i></i>${r.status}</span>`;
+      + `<span class="b-type ${r.type.toLowerCase()}" role="cell">${r.type}</span>`;
     b.addEventListener('click', () => { const s = document.getElementById(r.id); const rc = s.getBoundingClientRect(); scrollTo({ top: rc.top + scrollY - innerHeight / 2 + Math.min(rc.height, innerHeight * 0.8) / 2, behavior: reduce ? 'auto' : 'smooth' }); });
     boardRows.appendChild(b);
   });
@@ -479,7 +477,6 @@
   rebuild();
 
   /* hero HUD flicker */
-  const alt = $('#hudAlt'), gs = $('#hudGs');
 
   /* ====================================================================
      MAIN LOOP
@@ -491,7 +488,6 @@
     if (heroVisible) drawEarth(t);
     if (globeVisible) { stepGlobe(dt); drawGlobe(t); }
     stepRoute();
-    if (heroVisible && frameN % 30 === 0 && !reduce) { alt.textContent = (35000 + Math.round(Math.sin(t / 3000) * 40)).toLocaleString() + ' ft'; gs.textContent = 512 + Math.round(Math.sin(t / 2100) * 3) + ' kt'; }
     requestAnimationFrame(loop);
   }
   requestAnimationFrame(loop);
