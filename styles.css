@@ -252,6 +252,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .ticket-row span { display: block; font: 10.5px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 3px; }
 .ticket-row b { font-weight: 600; font-size: 15px; }
 .ticket-row.top b { font-family: var(--display); font-weight: 700; font-size: 20px; letter-spacing: -.01em; }
+.ticket-row .span2 { grid-column: span 2; }
+.bul + .links { margin-top: 4px !important; }
 .bio { color: var(--ink-2); font-size: 16.5px; margin: 0 0 22px; max-width: 46em; }
 .ticket h3 { margin: 24px 0 10px; font: 11.5px var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--amber); font-weight: 400; }
 .miles { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
@@ -303,6 +305,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .barcode { display: none; }
   .route-plane { width: 46px; height: 46px; margin: -23px 0 0 -23px; }
   .ticket-row { grid-template-columns: 1fr; gap: 10px; }
+  .ticket-row .span2 { grid-column: auto; }
   .carry { grid-template-columns: 1fr; }
   .stats b { font-size: 34px; }
 }

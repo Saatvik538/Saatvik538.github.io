@@ -349,8 +349,63 @@
     h.text('4 MONTHS', 560, 214, 9.5, MUTE, 'center');
   }
 
+
+  // =================================================================
+  // Walk-Free: street heat map, quickest route vs. route through shade
+  // =================================================================
+  function wlk(g, t, h) {
+    const hour = (t * 0.08) % 1; // sweeps 9 AM → 7 PM
+    const sunH = Math.sin(hour * Math.PI);
+    // sun & time panel
+    h.line(Array.from({ length: 31 }, (_, i) => { const u = i / 30; return [20 + u * 110, 92 - Math.sin(u * Math.PI) * 56]; }), DIM, 1.2, 0, [3, 4]);
+    const sx = 20 + hour * 110, sy = 92 - sunH * 56;
+    h.circ(sx, sy, 9, null, 0, AMB, 18);
+    const hr = 9 + Math.round(hour * 10), label = `${((hr + 11) % 12) + 1} ${hr < 12 ? 'AM' : 'PM'}`;
+    h.text(label, 75, 118, 15, INK, 'center', 700, 'Syne, sans-serif');
+    const feels = Math.round(84 + sunH * 22);
+    h.text('FEELS LIKE', 75, 146, 9.5, MUTE, 'center');
+    h.text(`${feels}°F`, 75, 168, 20, sunH > 0.6 ? ROSE : AMB, 'center', 800, 'Syne, sans-serif');
+    h.text('ON THE QUICK ROUTE', 75, 190, 8.5, MUTE, 'center');
+
+    // street grid
+    const X0 = 160, Y0 = 26, DX = 78, DY = 66;
+    const N = (i, j) => [X0 + i * DX, Y0 + j * DY];
+    const shadeEdges = new Set(['0,3-0,2', '0,2-0,1', '0,1-1,1', '1,1-2,1', '2,1-2,0', '2,0-3,0', '3,0-4,0']);
+    const key = (a, b) => `${a}-${b}`;
+    for (let i = 0; i < 4; i++) for (let j = 0; j < 3; j++) { const [x, y] = N(i, j); h.rect(x + 7, y + 7, DX - 14, DY - 14, 4, null, 0, 'rgba(10,18,36,0.9)', 0); }
+    const edge = (a, b) => {
+      const [x1, y1] = N(...a), [x2, y2] = N(...b), k = key(a, b), k2 = key(b, a);
+      const shaded = shadeEdges.has(k) || shadeEdges.has(k2);
+      const heat = shaded ? 0.15 + sunH * 0.2 : 0.35 + sunH * 0.65 * (0.75 + 0.25 * Math.sin(a[0] * 3.1 + a[1] * 1.7));
+      const col = heat < 0.4 ? `rgba(137,230,255,${0.35 + heat})` : heat < 0.7 ? `rgba(255,179,92,${0.5 + heat * 0.4})` : `rgba(255,122,144,${0.55 + heat * 0.4})`;
+      h.line([[x1, y1], [x2, y2]], col, 5, heat > 0.7 ? 8 : 0);
+      if (shaded) for (let u = 0.2; u < 1; u += 0.3) { const x = lerp(x1, x2, u), y = lerp(y1, y2, u); h.circ(x + (y1 === y2 ? 0 : 9), y + (y1 === y2 ? -9 : 0), 7, null, 0, 'rgba(77,255,158,0.28)', 0); }
+    };
+    for (let i = 0; i <= 4; i++) for (let j = 0; j <= 3; j++) { if (i < 4) edge([i, j], [i + 1, j]); if (j < 3) edge([i, j], [i, j + 1]); }
+    // routes
+    const quick = [[0, 3], [1, 3], [1, 2], [2, 2], [2, 1], [3, 1], [3, 0], [4, 0]].map((p) => N(...p));
+    const shade = [[0, 3], [0, 2], [0, 1], [1, 1], [2, 1], [2, 0], [3, 0], [4, 0]].map((p) => N(...p));
+    h.line(quick, ROSE, 1.6, 0, [5, 5]);
+    h.line(shade, ICE, 3, 12);
+    // walker along the shade route
+    const segs = shade.slice(1).map((p, i) => [shade[i], p]);
+    const u = (t * 0.12) % 1, f = u * segs.length, si = Math.min(segs.length - 1, Math.floor(f)), su = f - si;
+    const [[ax, ay], [bx, by]] = segs[si];
+    h.circ(lerp(ax, bx, su), lerp(ay, by, su), 6, INK, 2, ICE, 14);
+    const [sx0, sy0] = shade[0], [ex, ey] = shade[shade.length - 1];
+    h.circ(sx0, sy0, 6, AMB, 2, '#0b1428', 6); h.text('A', sx0 - 14, sy0 + 4, 11, AMB, 'center', 700);
+    h.circ(ex, ey, 6, GRN, 2, '#0b1428', 6); h.text('B', ex + 14, ey, 11, GRN, 'center', 700);
+
+    // route types + comparison
+    const types = ['Quickest', 'More shade', 'Scenic', 'Cool stops', 'Step-free', 'Lit at night'];
+    const act = Math.floor(t / 1.6) % types.length;
+    types.forEach((ty, i) => { const y = 34 + i * 22, on = i === act || i === 1; h.rect(500, y - 9, 120, 18, 9, on ? (i === 1 ? ICE : AMB) : DIM, 1.2, on ? 'rgba(137,230,255,0.08)' : null, on ? 6 : 0); h.text(ty, 560, y, 10, on ? INK : MUTE, 'center'); });
+    h.text('VIA SHADE', 500, 186, 9.5, MUTE); h.text(`${Math.round(feels - 8 - sunH * 6)}°F`, 620, 186, 14, ICE, 'right', 800, 'Syne, sans-serif');
+    h.text('QUICKEST', 500, 210, 9.5, MUTE); h.text(`${feels}°F`, 620, 210, 14, ROSE, 'right', 800, 'Syne, sans-serif');
+  }
+
   // ---------- runner ----------
-  const SCENES = { ftc, atb, arm, gwy, omn, ska };
+  const SCENES = { ftc, atb, arm, gwy, omn, wlk, ska };
   const items = [...document.querySelectorAll('canvas[data-viz]')].map((c) => ({ c, g: c.getContext('2d'), fn: SCENES[c.dataset.viz], vis: false, w: 0 }));
   const io = new IntersectionObserver((es) => es.forEach((e) => { const it = items.find((i) => i.c === e.target); if (it) it.vis = e.isIntersecting; }), { rootMargin: '120px' });
   items.forEach((it) => io.observe(it.c));

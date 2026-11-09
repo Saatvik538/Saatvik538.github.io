@@ -384,13 +384,15 @@
   // Chronological (oldest first). `sort` is a decimal year used only for ordering.
   const BOARD = [
     { id: 's-ftc', sort: 2022.0, year: '2022', dates: '2022 – 2025', code: 'FTC', name: 'FTC Robo Troopers', what: 'Robot CAD, build & autonomous code', type: 'Project' },
-    { id: 's-owl', sort: 2024.45, year: '2024', dates: 'Jun – Aug 2024', code: 'OWL', name: 'Orangewood Labs', what: 'Forward-Deployed Engineering Intern', type: 'Experience' },
+    { id: 's-wml', sort: 2024.37, year: '2024', dates: 'May – Sep 2024', code: 'WML', name: 'William & Mary Data Lab', what: 'Research Intern · LLM code parallelization', type: 'Experience' },
+    { id: 's-owl', sort: 2024.45, year: '2024', dates: 'Jun – Aug 2024', code: 'OWL', name: 'Orangewood Labs', what: 'Technical Intern', type: 'Experience' },
     { id: 's-atb', sort: 2024.5, year: '2024', dates: '2024 – 2026', code: 'ATB', name: 'AcousticTB', what: 'TB screening from cough audio · published', type: 'Project' },
     { id: 's-arm', sort: 2025.0, year: '2025', dates: '2025 – 2026', code: 'ARM', name: 'Language-Controlled Robot Arm', what: 'Natural-language control of a 4-axis arm', type: 'Project' },
     { id: 's-dhm', sort: 2025.37, year: '2025', dates: 'May 2025 – Aug 2026', code: 'DHM', name: 'Dartmouth Hitchcock Medical Center', what: 'AI/ML Research Intern → Research Mentor', type: 'Experience' },
     { id: 's-obs', sort: 2025.5, year: '2025', dates: 'Jul – Aug 2025', code: 'OBS', name: 'Obscurity Labs', what: 'Software Engineering Intern', type: 'Experience' },
-    { id: 's-gwy', sort: 2026.1, year: '2026', dates: '2026', code: 'GWY', name: 'GaitWay', what: 'iPhone LiDAR gait analysis · 1st place', type: 'Project' },
-    { id: 's-omn', sort: 2026.2, year: '2026', dates: '2026', code: 'OMN', name: 'OmniGlasses', what: 'Smart glasses with rear-view detection', type: 'Project' },
+    { id: 's-gwy', sort: 2026.1, year: '2026', dates: '2026', code: 'GWY', name: 'GaitWay', what: 'iPhone LiDAR gait analysis · 1st at ATConnect', type: 'Project' },
+    { id: 's-omn', sort: 2026.2, year: '2026', dates: '2026', code: 'OMN', name: 'OmniGlasses', what: 'Blind-spot smart glasses · Meta HQ final', type: 'Project' },
+    { id: 's-wlk', sort: 2026.25, year: '2026', dates: '2026', code: 'WLK', name: 'Walk-Free', what: 'Heat-aware walking routes through shade', type: 'Project' },
     { id: 's-ska', sort: 2026.3, year: '2026', dates: '2026', code: 'SKA', name: 'skadvising.org', what: 'Tutoring business website', type: 'Project' },
     { id: 's-nst', sort: 2026.67, year: '2026', dates: 'Sep 2026 – Present', code: 'NST', name: 'Nesteye', what: 'Embedded Software Engineering Intern', type: 'Experience' },
     { id: 's-tar', sort: 2026.68, year: '2026', dates: 'Sep 2026 – Present', code: 'TAR', name: 'Texas Aerial Robotics', what: 'Hardware & Software Team Member', type: 'Experience' },

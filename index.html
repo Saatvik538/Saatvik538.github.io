@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#03050c">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%2303050c'/%3E%3Cpath fill='%2389e6ff' d='M50 8c4 4 5 12 5 20v14l34 20v7L55 58v18l10 8v5l-15-4-15 4v-5l10-8V58L11 69v-7l34-20V28c0-8 1-16 5-20z'/%3E%3C/svg%3E">
 <link rel="preload" href="assets/fonts/syne-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="styles.css?v=20261109">
+<link rel="stylesheet" href="styles.css?v=20261110">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -130,7 +130,7 @@
         <div class="pass-main">
           <div class="pass-top"><span class="code">ATB</span><span class="meta">Published · sole author</span></div>
           <h3>AcousticTB</h3>
-          <p>A handheld tuberculosis screener that listens to a cough. I designed a 3-sensor Arduino device (MAX9814 mic amp, ultrasonic ranging, camera), 3D-printed the enclosure, and ran a CNN + XGBoost ensemble on noise-augmented audio.</p>
+          <p>A handheld tuberculosis screener that listens to a cough. I designed a 3-sensor Arduino device (MAX9814 mic amp, ultrasonic ranging, camera), 3D-printed the enclosure, and ran a CNN + XGBoost ensemble on noise-augmented audio. Patient-wise splits and focal loss guard against data leakage and class imbalance.</p>
           <ul class="chips"><li>Python</li><li>TensorFlow</li><li>XGBoost</li><li>Arduino C++</li><li>3D printing</li></ul>
           <p class="links"><a href="https://www.techrxiv.org/doi/pdf/10.36227/techrxiv.175742700.07240558/v1" target="_blank" rel="noopener">Read the paper ↗</a><a href="https://github.com/Saatvik538/AcousticTB" target="_blank" rel="noopener">Code ↗</a></p>
         </div>
@@ -165,9 +165,9 @@
       <div class="pass">
         <div class="viz"><canvas data-viz="gwy" aria-hidden="true"></canvas></div>
         <div class="pass-main">
-          <div class="pass-top"><span class="code">GWY</span><span class="meta">1st place · health</span></div>
+          <div class="pass-top"><span class="code">GWY</span><span class="meta">1st place · ATConnect</span></div>
           <h3>GaitWay</h3>
-          <p>Turns an iPhone's LiDAR into a clinical gait lab that measures joint angles, stride velocity and postural sway on-device. Clinicians get measurements, never video. Replaces $5.5K–22K/yr rigs.</p>
+          <p>Turns an iPhone's LiDAR into a clinical gait lab that measures joint angles, stride velocity and postural sway on-device. Clinicians get measurements, never video. Replaces $5.5K–22K/yr rigs. Won 1st at ATConnect, the first Assistive Technology Fair in Northern Virginia, after testing it live on 100+ people.</p>
           <ul class="chips"><li>Swift</li><li>ARKit LiDAR</li><li>Core ML</li><li>Supabase</li></ul>
           <p class="links"><a href="https://github.com/Saatvik538/gaitway" target="_blank" rel="noopener">Code ↗</a></p>
         </div>
@@ -184,19 +184,40 @@
       <div class="pass">
         <div class="viz"><canvas data-viz="omn" aria-hidden="true"></canvas></div>
         <div class="pass-main">
-          <div class="pass-top"><span class="code">OMN</span><span class="meta">Wearables · embedded</span></div>
+          <div class="pass-top"><span class="code">OMN</span><span class="meta">Meta Hackathon final · Meta HQ</span></div>
           <h3>OmniGlasses</h3>
-          <p>Glasses with eyes in the back of your head. Three ESP32 cameras stream to a phone over a custom UDP protocol, an FPGA turns collision events into spoken warnings, and a Flutter app tracks eye strain.</p>
-          <ul class="chips"><li>ESP32-CAM</li><li>FPGA</li><li>UDP</li><li>YOLO</li><li>Flutter</li></ul>
+          <p>Smart glasses that watch your blind spots. Three ESP32 cameras stream live video to a Flutter app over a custom UDP protocol that rebuilds frames, an FPGA turns collision events into instant spoken warnings, and Meta Muse describes the scene. The app also flags digital eye strain with an on-phone blink/squint classifier and YOLO screen detection. Invited to the Meta Hackathon final at Meta HQ.</p>
+          <ul class="chips"><li>ESP32-CAM</li><li>FPGA</li><li>UDP</li><li>FastAPI</li><li>YOLO</li><li>Flutter</li></ul>
+          <p class="links"><a href="https://devpost.com/software/omniglasses-bi8as1" target="_blank" rel="noopener">Devpost ↗</a><a href="https://github.com/aman-singh14/Byte-me" target="_blank" rel="noopener">Code ↗</a></p>
         </div>
         <div class="pass-stub">
           <div><span>Rear objects caught</span><b>95%</b></div>
           <div><span>Blink/squint</span><b>98%</b></div>
-          <div><span>Live cams</span><b>3</b></div>
+          <div><span>Screen detection</span><b>99%</b></div>
           <div class="barcode" aria-hidden="true"></div>
         </div>
       </div>
     </article>
+
+    <article class="stop" id="s-wlk" data-code="WLK" data-year="2026" data-name="Walk-Free">
+      <div class="pass">
+        <div class="viz"><canvas data-viz="wlk" aria-hidden="true"></canvas></div>
+        <div class="pass-main">
+          <div class="pass-top"><span class="code">WLK</span><span class="meta">Team project · urban heat</span></div>
+          <h3>Walk-Free</h3>
+          <p>A heat-aware walking planner that shows how hot each street feels at the hour you walk it and routes you through shade. Seven areas are pre-built (UT Austin, UC Berkeley, Michigan, UCLA, Stanford, Arizona State, Midtown Manhattan) and any other U.S. place builds live from OpenStreetMap. An LLM assistant (Meta Muse Spark) plans routes from plain English, and SAM 3.1 segments tree canopy, pavement and sky from photos.</p>
+          <ul class="chips"><li>TypeScript</li><li>React</li><li>Three.js</li><li>PostgreSQL</li><li>SAM</li><li>LLM APIs</li></ul>
+          <p class="links"><a href="https://github.com/AyanBhardwaj1/Walk-Free" target="_blank" rel="noopener">Code ↗</a><a href="https://www.youtube.com/watch?v=s7D5n2cDVcw" target="_blank" rel="noopener">Demo video ↗</a></p>
+        </div>
+        <div class="pass-stub">
+          <div><span>Pre-built areas</span><b>7</b></div>
+          <div><span>Route types</span><b>6</b></div>
+          <div><span>Voice languages</span><b>25</b></div>
+          <div class="barcode" aria-hidden="true"></div>
+        </div>
+      </div>
+    </article>
+
 
     <article class="stop" id="s-ska" data-code="SKA" data-year="2026" data-name="skadvising.org">
       <div class="pass">
@@ -219,15 +240,36 @@
 
     <div class="leg"><span>02</span><b>Experience</b></div>
 
+    <article class="stop exp" id="s-wml" data-code="WML" data-year="2024" data-name="William &amp; Mary Data Lab">
+      <div class="pass">
+        <div class="pass-main">
+          <div class="pass-top"><span class="code">WML</span><span class="meta">May – Sep 2024 · Remote</span></div>
+          <h3>College of William &amp; Mary, Data Lab</h3>
+          <p class="role">Research Intern · under Prof. Pradeep Kumar</p>
+          <img class="shot" src="assets/photos/william-mary.jpg" alt="William &amp; Mary Data Lab" loading="lazy" onerror="this.remove()">
+          <ul class="bul">
+            <li>Prompt-engineered an LLM to rewrite researchers' code with multi-core parallel programming techniques, targeting sparse matrix kernels (SpMM and SDDMM).</li>
+            <li>Built an LLM agent that parallelizes researchers' code across cores, now used by 15 researchers in the Data Lab.</li>
+          </ul>
+        </div>
+        <div class="pass-stub">
+          <div><span>Researchers</span><b>15</b></div>
+          <div><span>Kernels</span><b>SpMM</b></div>
+          <div><span>Year</span><b>2024</b></div>
+        </div>
+      </div>
+    </article>
+
     <article class="stop exp" id="s-owl" data-code="OWL" data-year="2024" data-name="Orangewood Labs">
       <div class="pass">
         <div class="pass-main">
           <div class="pass-top"><span class="code">OWL</span><span class="meta">Jun – Aug 2024 · Remote</span></div>
           <h3>Orangewood Labs</h3>
-          <p class="role">Forward-Deployed Engineering Intern · YC-backed robot arms</p>
+          <p class="role">Technical Intern · YC-backed robot arms</p>
           <img class="shot" src="assets/photos/orangewood.jpg" alt="Orangewood Labs" loading="lazy" onerror="this.remove()">
           <ul class="bul">
-            <li>Secured 10 product demos and pilot negotiations by mapping robot-arm use cases across 500+ factories and schools.</li>
+            <li>Automated the startup's outreach process, mapping robot-arm use cases and leads across 500+ factories and schools.</li>
+            <li>Built product demos and secured 10 demos and pilot negotiations.</li>
           </ul>
         </div>
         <div class="pass-stub">
@@ -248,8 +290,10 @@
           <ul class="bul">
             <li>Predicted survival for 397 colorectal cancer patients by fusing slide images, RNA-seq, methylation and spatial data.</li>
             <li>Ranked survival correctly for 72% of patient pairs (0.717 C-index) via gated attention fusion and a TextGrad LLM loss.</li>
-            <li>Promoted to mentor 10 of 90 interns across 13 ML projects; 30-page paper selected for publication.</li>
+            <li>Promoted to Research Mentor for 10 of 90 interns across 13 ML projects.</li>
+            <li>Presented at the EDIT conference; 30-page paper selected for publication.</li>
           </ul>
+          <p class="links"><a href="https://jlevy44.github.io/EDIT_AI_Virtual_Conference_25/presenter_articles/colon.html" target="_blank" rel="noopener">Paper &amp; presentation ↗</a></p>
         </div>
         <div class="pass-stub">
           <div><span>Patients</span><b>397</b></div>
@@ -306,12 +350,14 @@
         <div class="pass-main">
           <div class="pass-top"><span class="code">TAR</span><span class="meta">Sep 2026 – Present · Austin, TX</span></div>
           <h3>Texas Aerial Robotics</h3>
-          <p class="role">Hardware &amp; Software Team Member · IARC drone swarm</p>
+          <p class="role">Hardware &amp; Software Team Member · IARC Mission 10 drone swarm</p>
           <img class="shot" src="assets/photos/texas-aerial-robotics.jpg" alt="Texas Aerial Robotics" loading="lazy" onerror="this.remove()">
           <ul class="bul">
             <li>Built a ROS-compatible Unity (C#) minefield simulator for zero-risk pre-flight testing of a 4-drone swarm.</li>
             <li>Built a shared mine map for 4 drones by fusing AprilTag detections and pymavlink pose data in SQLite with 1 ft clearance.</li>
-            <li>Enabling hands-free control of each drone by relaying phone voice commands (start, pause, land) over TCP.</li>
+            <li>Building hands-free voice control: phone commands (start, pause, land) relayed over TCP to each drone's own port.</li>
+            <li>Bringing the first physical drone online by integrating flight control, camera and pymavlink telemetry, with 4 drones targeted by spring.</li>
+            <li>Developing AprilTag mine detection and mapping to plan safe swarm paths in under 10 minutes; also working on hardware such as the drone kill switch.</li>
           </ul>
         </div>
         <div class="pass-stub">
@@ -367,28 +413,38 @@
         <div class="ticket-row top">
           <div><span>Name</span><b>Saatvik Kesarwani</b></div>
           <div><span>Location</span><b>Austin, TX</b></div>
-          <div><span>Program</span><b>Robotics Honors</b></div>
+          <div><span>Program</span><b>Texas Robotics Honors</b></div>
         </div>
-        <p class="bio">I love to build and explore. I came up through FIRST robotics and the Computer Systems Lab at Thomas Jefferson High School for Science and Technology, and now study Electrical &amp; Computer Engineering with a robotics minor at UT Austin. I like problems where the code has to touch the real world.</p>
+        <p class="bio">I love to build and explore. I came up through FIRST robotics and the Computer Systems Lab at Thomas Jefferson High School for Science and Technology, and now study Electrical &amp; Computer Engineering with a robotics minor at UT Austin. I like problems where the code has to touch the real world. Right now I'm most interested in how LLMs work internally and how to steer them, AI agents that do research, robotics and autonomy (drone swarms, robot arms), embedded systems, and AI for health.</p>
         <div class="ticket-row">
           <div><span>School</span><b>The University of Texas at Austin</b></div>
           <div><span>Major</span><b>ECE · Robotics minor</b></div>
-          <div><span>Clubs</span><b>IEEE UT · ML &amp; DS · Texas Momentum · Texas Accelerate</b></div>
+          <div><span>Activities</span><b>Texas Aerial Robotics · IEEE UT · ML &amp; DS · Texas Momentum · Texas Accelerate</b></div>
+        </div>
+        <div class="ticket-row">
+          <div><span>Research</span><b>Freshman Research Initiative · Autonomous Robots (from Spring 2027)</b></div>
+          <div class="span2"><span>Coursework</span><b>Data Structures · Linear Algebra · Multivariable Calculus · Computer Engineering · Electrical Engineering · Engineering Physics I</b></div>
         </div>
         <h3>Honors</h3>
         <ul class="miles">
           <li><a href="https://asterhacks-2025.devpost.com/project-gallery" target="_blank" rel="noopener"><b>1/188</b>Grand Prize, AsterHacks</a></li>
           <li><a href="https://hackvortex-codestorm-5.devpost.com/project-gallery" target="_blank" rel="noopener"><b>3/828</b>HackVortex</a></li>
           <li><a href="https://hacktj.org/museum#year-2025" target="_blank" rel="noopener"><b>Best</b>Biomedical, HackTJ</a></li>
-          <li><span><b>Worlds</b>FTC State Champions</span></li>
+          <li><span><b>4th</b>MIT (IT)² coding competition</span></li>
+          <li><span><b>1st</b>ATConnect · GaitWay</span></li>
+          <li><span><b>Final</b>Meta Hackathon at Meta HQ · OmniGlasses</span></li>
+          <li><span><b>Top 3 ×2</b>Hackathons · AcousticTB</span></li>
+          <li><span><b>Worlds</b>FTC World Championship qualifier</span></li>
           <li><span><b>NMS</b>National Merit Scholar</span></li>
         </ul>
         <h3>Skills</h3>
         <dl class="carry">
-          <div><dt>Languages</dt><dd>Python, C, C++, C#, Go, Java, TypeScript, Swift, SQL, CUDA</dd></div>
-          <div><dt>Robotics &amp; HW</dt><dd>ROS, Arduino, ESP32, FPGA, I2C/UART, PCB design, oscilloscope</dd></div>
-          <div><dt>ML &amp; Vision</dt><dd>PyTorch, TensorFlow, scikit-learn, OpenCV, YOLO, Core ML</dd></div>
-          <div><dt>Software &amp; CAD</dt><dd>FastAPI, React, PostgreSQL, Docker, Linux, Onshape, Fusion 360</dd></div>
+          <div><dt>Languages</dt><dd>Python, C, C++, C#, Go, Java, TypeScript, JavaScript, Swift, Dart, SQL, CUDA, R, Assembly</dd></div>
+          <div><dt>ML &amp; Data</dt><dd>PyTorch, TensorFlow, Keras, scikit-learn, XGBoost, Hugging Face, OpenCV, YOLO, NumPy, pandas</dd></div>
+          <div><dt>Robotics &amp; Simulation</dt><dd>ROS, Unity, NVIDIA Omniverse, Three.js, pymavlink, AprilTag, ARKit</dd></div>
+          <div><dt>Embedded &amp; Hardware</dt><dd>ESP32, Arduino, FPGA, I2C, UART, TCP/UDP, oscilloscope, LTspice, Fusion 360, Inventor, SolidWorks</dd></div>
+          <div><dt>Software</dt><dd>FastAPI, Flask, Node.js, Next.js, React, REST APIs, PostgreSQL, SQLite, Supabase, Docker, GitHub Actions, Linux</dd></div>
+          <div><dt>AI-Assisted Development</dt><dd>Claude Code, OpenAI Codex, agentic coding workflows, LLM APIs, prompt engineering</dd></div>
         </dl>
       </div>
     </div>
@@ -416,7 +472,7 @@
 <script src="assets/vendor/d3-array.min.js" defer></script>
 <script src="assets/vendor/d3-geo.min.js" defer></script>
 <script src="assets/vendor/topojson-client.min.js" defer></script>
-<script src="viz.js?v=20261109" defer></script>
-<script src="app.js?v=20261109" defer></script>
+<script src="viz.js?v=20261110" defer></script>
+<script src="app.js?v=20261110" defer></script>
 </body>
 </html>
